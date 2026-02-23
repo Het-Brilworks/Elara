@@ -20,10 +20,7 @@ export default function ActivityCard({
 }: ActivityCardProps) {
   return (
     <Pressable
-      style={({ pressed }) => [
-        styles.container,
-        pressed && styles.pressed,
-      ]}
+      style={({ pressed }) => [styles.container, pressed && styles.pressed]}
       onPress={onPress}
     >
       <View style={[styles.iconContainer, { backgroundColor: iconColor }]}>

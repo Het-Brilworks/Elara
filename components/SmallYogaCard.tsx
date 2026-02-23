@@ -1,6 +1,12 @@
 import { theme } from "@/constants/theme";
 import React from "react";
-import { ImageBackground, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+    ImageBackground,
+    Pressable,
+    StyleSheet,
+    Text,
+    View,
+} from "react-native";
 
 interface SmallYogaCardProps {
   title: string;
@@ -19,10 +25,7 @@ export default function SmallYogaCard({
 }: SmallYogaCardProps) {
   return (
     <Pressable
-      style={({ pressed }) => [
-        styles.container,
-        pressed && styles.pressed,
-      ]}
+      style={({ pressed }) => [styles.container, pressed && styles.pressed]}
       onPress={onPress}
     >
       <ImageBackground
@@ -31,8 +34,12 @@ export default function SmallYogaCard({
         imageStyle={styles.image}
       />
       <View style={styles.content}>
-        <Text style={styles.title} numberOfLines={1}>{title}</Text>
-        <Text style={styles.meta}>{duration} • {type}</Text>
+        <Text style={styles.title} numberOfLines={1}>
+          {title}
+        </Text>
+        <Text style={styles.meta}>
+          {duration} • {type}
+        </Text>
       </View>
     </Pressable>
   );
