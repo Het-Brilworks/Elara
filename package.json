@@ -3,12 +3,22 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "start": "expo start",
-    "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
+    "postinstall": "patch-package",
     "ios": "expo run:ios",
+    "start": "expo start",
+    "prebuild": "expo prebuild",
+    "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" && prettier -c \"**/*.{js,jsx,ts,tsx,json}\"",
+    "format": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix && prettier \"**/*.{js,jsx,ts,tsx,json}\" --write",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "build:android:develop": "npx eas build --platform android --profile develop --non-interactive",
+    "build:ios:develop": "npx eas build --platform ios --profile develop --non-interactive",
+    "build:ios:production:local": "npx eas build --platform ios --profile production --local",
+    "build:android:production": "npx eas build --platform android --profile production --non-interactive",
+    "build:ios:production": "eas build --platform ios --profile production --non-interactive",
+    "submit:android:production": "npx eas submit --platform android --profile production --non-interactive",
+    "submit:ios:production": "npx eas submit --platform ios --profile production --non-interactive",
+    "update:production": "eas update --channel production"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

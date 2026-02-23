@@ -1,10 +1,16 @@
 import { theme } from "@/constants/theme";
+import { useAuthState } from "@/Firebase/hooks/useAuth";
+import { useUserProfile } from "@/Firebase/hooks/useUser";
 import { Tabs } from "expo-router";
-import { Activity, Dumbbell, Heart, Home, User } from "lucide-react-native";
-import React from "react";
+import { Baby, Dumbbell, Heart, Home, User } from "lucide-react-native";
 import { Platform } from "react-native";
 
 export default function TabLayout() {
+  const { user } = useAuthState();
+  const { data: userProfile } = useUserProfile(user?.uid);
+
+  const isPrenatal = userProfile?.selectedJourney === "prenatal";
+
   return (
     <Tabs
       screenOptions={{
@@ -40,15 +46,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="tracker"
-        options={{
-          title: "Tracker",
-          tabBarIcon: ({ color, size }) => (
-            <Activity color={color} size={22} strokeWidth={2} />
-          ),
-        }}
-      />
+
       <Tabs.Screen
         name="yoga"
         options={{
@@ -58,6 +56,19 @@ export default function TabLayout() {
           ),
         }}
       />
+
+      <Tabs.Screen
+        name="baby"
+        options={{
+          title: "Baby",
+          href: isPrenatal ? undefined : null,
+
+          tabBarIcon: ({ color, size }) => (
+            <Baby color={color} size={22} strokeWidth={2} />
+          ),
+        }}
+      />
+
       <Tabs.Screen
         name="meditation"
         options={{
@@ -74,6 +85,14 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <User color={color} size={22} strokeWidth={2} />
           ),
+        }}
+      />
+
+      {/* Hide tracker tab as per requirements */}
+      <Tabs.Screen
+        name="tracker"
+        options={{
+          href: null,
         }}
       />
     </Tabs>
