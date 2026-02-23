@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "200180300834",
+    "project_id": "elara-29e5c",
+    "storage_bucket": "elara-29e5c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:200180300834:android:af99a96c7f2d40c1141e7b",
+        "android_client_info": {
+          "package_name": "com.brilworksdigital.Elara"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7DNnceG2dNS7VGyFyMScinaywb_QvABM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
