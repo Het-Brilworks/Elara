@@ -51,12 +51,8 @@ export default function YogaSessionCard({
         >
           <Heart
             size={20}
-            color={
-              isFavorite
-                ? theme.colors.dark.error
-                : theme.colors.dark.on_primary
-            }
-            fill={isFavorite ? theme.colors.dark.error : "transparent"}
+            color={isFavorite ? "#FF6B6B" : "#666"}
+            fill={isFavorite ? "#FF6B6B" : "transparent"}
             strokeWidth={2}
           />
         </Pressable>
@@ -79,10 +75,12 @@ export default function YogaSessionCard({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: theme.colors.dark.surface,
+    backgroundColor: "#FFF",
     borderRadius: theme.radii.md,
     marginBottom: theme.spacing.md,
     overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "#F0F0F0",
   },
   pressed: {
     opacity: 0.9,
@@ -101,7 +99,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: theme.spacing.md,
     right: theme.spacing.md,
-    backgroundColor: "rgba(56, 56, 56, 0.8)",
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -112,7 +110,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: theme.spacing.md,
     right: theme.spacing.md + 48,
-    backgroundColor: "rgba(250, 247, 242, 0.85)",
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
     paddingHorizontal: theme.spacing.sm,
     paddingVertical: 4,
     borderRadius: theme.radii.full,
@@ -120,7 +118,7 @@ const styles = StyleSheet.create({
   durationText: {
     fontSize: theme.textStyles.label_small.fontSize,
     fontWeight: "600",
-    color: theme.colors.dark.background,
+    color: "#1A1A1A",
   },
   content: {
     padding: theme.spacing.md,
@@ -128,12 +126,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: theme.textStyles.title_medium.fontSize,
     fontWeight: "600",
-    color: theme.colors.dark.primary_text,
+    color: "#1A1A1A",
     marginBottom: 4,
   },
   instructor: {
     fontSize: theme.textStyles.body_small.fontSize,
-    color: theme.colors.dark.secondary_text,
+    color: "#666",
     marginBottom: theme.spacing.sm,
   },
   metaContainer: {
@@ -141,7 +139,7 @@ const styles = StyleSheet.create({
     gap: theme.spacing.sm,
   },
   badge: {
-    backgroundColor: theme.colors.dark.background,
+    backgroundColor: "#F5F5F5",
     paddingHorizontal: theme.spacing.sm,
     paddingVertical: 4,
     borderRadius: theme.radii.sm,
@@ -149,6 +147,6 @@ const styles = StyleSheet.create({
   badgeText: {
     fontSize: theme.textStyles.label_small.fontSize,
     fontWeight: "600",
-    color: theme.colors.dark.secondary_text,
+    color: "#666",
   },
 });

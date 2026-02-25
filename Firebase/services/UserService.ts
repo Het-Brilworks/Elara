@@ -7,11 +7,14 @@ export interface UserProfile {
   name: string;
   photoURL?: string;
   pregnancyWeek?: number;
-  dueDate?: Date;
+  dueDate?: any; // Can be Date, Firestore Timestamp, or string
   createdAt: any;
+  updatedAt?: any;
   isVerified: boolean;
   isProfileCompleted: boolean;
   selectedJourney?: string;
+  isDeleted?: boolean;
+  deletedAt?: any;
 }
 
 // Helper function to parse Firestore errors
@@ -36,7 +39,14 @@ export const getUserProfile = async (uid: string) => {
     if (!doc.exists()) {
       return { success: false, error: "User profile not found" };
     }
-    return { success: true, data: { uid, ...doc.data() } as UserProfile };
+    const userData = { uid, ...doc.data() } as UserProfile;
+
+    // Check if account is deleted
+    if (userData.isDeleted) {
+      return { success: false, error: "This account has been deleted" };
+    }
+
+    return { success: true, data: userData };
   } catch (error: any) {
     return { success: false, error: parseFirestoreError(error) };
   }
@@ -102,7 +112,13 @@ export const subscribeToUserProfile = (
     .onSnapshot(
       (doc) => {
         if (doc.exists()) {
-          onUpdate({ uid, ...doc.data() } as UserProfile);
+          const userData = { uid, ...doc.data() } as UserProfile;
+          // Don't return deleted accounts
+          if (userData.isDeleted) {
+            onUpdate(null);
+          } else {
+            onUpdate(userData);
+          }
         } else {
           onUpdate(null);
         }
@@ -112,4 +128,18 @@ export const subscribeToUserProfile = (
         onUpdate(null);
       },
     );
+};
+
+// Soft delete user account
+export const softDeleteAccount = async (uid: string) => {
+  try {
+    await firestore().collection("users").doc(uid).update({
+      isDeleted: true,
+      deletedAt: firestore.FieldValue.serverTimestamp(),
+      updatedAt: firestore.FieldValue.serverTimestamp(),
+    });
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: parseFirestoreError(error) };
+  }
 };

@@ -1,11 +1,11 @@
 import { theme } from "@/constants/theme";
 import React from "react";
 import {
-    ImageBackground,
-    Pressable,
-    StyleSheet,
-    Text,
-    View,
+  ImageBackground,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
 interface SmallYogaCardProps {
@@ -48,10 +48,12 @@ export default function SmallYogaCard({
 const styles = StyleSheet.create({
   container: {
     width: 160,
-    backgroundColor: theme.colors.dark.surface,
+    backgroundColor: "#FFF",
     borderRadius: theme.radii.sm,
     marginRight: theme.spacing.md,
     overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "#F0F0F0",
   },
   pressed: {
     opacity: 0.9,
@@ -70,11 +72,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: theme.textStyles.label_medium.fontSize,
     fontWeight: "600",
-    color: theme.colors.dark.primary_text,
+    color: "#1A1A1A",
     marginBottom: 4,
   },
   meta: {
     fontSize: theme.textStyles.label_small.fontSize,
-    color: theme.colors.dark.secondary_text,
+    color: "#666",
   },
 });

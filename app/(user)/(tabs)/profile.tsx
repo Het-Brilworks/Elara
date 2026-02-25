@@ -10,7 +10,7 @@ import {
   LogOut,
   Settings,
   ShieldCheck,
-  User
+  User,
 } from "lucide-react-native";
 import React, { useState } from "react";
 import {
@@ -29,7 +29,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function ProfileScreen() {
   const router = useRouter();
   const { user } = useAuthState();
-  const { data: userProfile, isLoading: profileLoading } = useUserProfile(user?.uid);
+  const { data: userProfile, isLoading: profileLoading } = useUserProfile(
+    user?.uid,
+  );
   const logoutMutation = useLogout();
   const [showSignOutModal, setShowSignOutModal] = useState(false);
 
@@ -62,7 +64,7 @@ export default function ProfileScreen() {
           id: "edit-profile",
           icon: User,
           label: "Edit Profile",
-          onPress: () => console.log("Edit Profile"),
+          onPress: () => router.push("/(user)/edit-profile"),
         },
         {
           id: "notifications",
@@ -74,7 +76,7 @@ export default function ProfileScreen() {
           id: "privacy",
           icon: ShieldCheck,
           label: "Privacy & Security",
-          onPress: () => console.log("Privacy"),
+          onPress: () => router.push("/(user)/privacy-security"),
         },
       ],
     },
@@ -85,7 +87,7 @@ export default function ProfileScreen() {
           id: "help",
           icon: HelpCircle,
           label: "Help Support",
-          onPress: () => console.log("Help"),
+          onPress: () => router.push("/(user)/help-support"),
         },
         {
           id: "about",
@@ -132,19 +134,26 @@ export default function ProfileScreen() {
             </View>
           )}
           <View style={styles.profileInfo}>
-            <Text style={styles.userName}>{userProfile?.name || "User Name"}</Text>
-            <Text style={styles.userEmail}>{userProfile?.email || "email@example.com"}</Text>
+            <Text style={styles.userName}>
+              {userProfile?.name || "User Name"}
+            </Text>
+            <Text style={styles.userEmail}>
+              {userProfile?.email || "email@example.com"}
+            </Text>
             <View style={styles.tagContainer}>
               <View style={styles.journeyTag}>
                 <Text style={styles.journeyTagText}>
                   {userProfile?.selectedJourney
-                    ? userProfile.selectedJourney.charAt(0).toUpperCase() + userProfile.selectedJourney.slice(1)
+                    ? userProfile.selectedJourney.charAt(0).toUpperCase() +
+                      userProfile.selectedJourney.slice(1)
                     : "Journey"}
                 </Text>
               </View>
               {userProfile?.pregnancyWeek && (
                 <View style={styles.weekTag}>
-                  <Text style={styles.weekTagText}>Week {userProfile.pregnancyWeek}</Text>
+                  <Text style={styles.weekTagText}>
+                    Week {userProfile.pregnancyWeek}
+                  </Text>
                 </View>
               )}
             </View>
@@ -167,7 +176,11 @@ export default function ProfileScreen() {
                   onPress={item.onPress}
                 >
                   <View style={styles.menuIconContainer}>
-                    <item.icon size={20} color={COLORS.PRIMARY} strokeWidth={2} />
+                    <item.icon
+                      size={20}
+                      color={COLORS.PRIMARY}
+                      strokeWidth={2}
+                    />
                   </View>
                   <Text style={styles.menuLabel}>{item.label}</Text>
                   <ChevronRight size={20} color="#999" />
@@ -397,4 +410,3 @@ const styles = StyleSheet.create({
     color: "#CCC",
   },
 });
-

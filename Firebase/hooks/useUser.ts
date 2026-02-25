@@ -1,12 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import {
-    getUserProfile,
-    subscribeToUserProfile,
-    updatePregnancyWeek,
-    updateUserProfile,
-    uploadProfilePicture,
-    UserProfile,
+  getUserProfile,
+  softDeleteAccount,
+  subscribeToUserProfile,
+  updatePregnancyWeek,
+  updateUserProfile,
+  uploadProfilePicture,
+  UserProfile,
 } from "../services/UserService";
 
 // Hook to fetch user profile
@@ -88,6 +89,20 @@ export const useUploadProfilePicture = () => {
   return useMutation({
     mutationFn: ({ uid, imageUri }: { uid: string; imageUri: string }) =>
       uploadProfilePicture(uid, imageUri),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["userProfile", variables.uid],
+      });
+    },
+  });
+};
+
+// Hook to soft delete user account
+export const useSoftDeleteAccount = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ uid }: { uid: string }) => softDeleteAccount(uid),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["userProfile", variables.uid],

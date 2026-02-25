@@ -81,11 +81,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                 disabled={isLoading}
               >
                 {isLoading ? (
-                  <ActivityIndicator
-                    color={
-                      confirmDestructive ? "#fff" : theme.colors.dark.on_primary
-                    }
-                  />
+                  <ActivityIndicator color="#FFF" />
                 ) : (
                   <Text
                     style={
@@ -109,7 +105,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
     padding: theme.spacing.lg,
@@ -119,22 +115,25 @@ const styles = StyleSheet.create({
     maxWidth: 340,
   },
   modal: {
-    backgroundColor: theme.colors.dark.surface,
+    backgroundColor: "#FFF",
     borderRadius: theme.radii.lg + 4,
     padding: theme.spacing.xl,
-    borderWidth: 1,
-    borderColor: "rgba(168, 181, 160, 0.1)",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
   },
   title: {
-    ...theme.textStyles.headline_small,
-    color: theme.colors.dark.primary_text,
+    ...theme.textStyles.title_large,
+    color: "#1A1A1A",
     marginBottom: theme.spacing.md,
     textAlign: "center",
     fontWeight: "700",
   },
   message: {
     ...theme.textStyles.body_medium,
-    color: theme.colors.dark.secondary_text,
+    color: "#666",
     textAlign: "center",
     lineHeight: 22,
     marginBottom: theme.spacing.xl,
@@ -145,42 +144,43 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
-    paddingVertical: theme.spacing.md + 2,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
     borderRadius: theme.radii.md,
     alignItems: "center",
     justifyContent: "center",
-    minHeight: 48,
+    minHeight: 50,
   },
   cancelButton: {
-    backgroundColor: theme.colors.dark.background,
+    backgroundColor: "#F5F5F5",
     borderWidth: 1,
-    borderColor: theme.colors.dark.divider,
+    borderColor: "#E0E0E0",
   },
   confirmButton: {
-    backgroundColor: theme.colors.dark.primary,
+    backgroundColor: theme.colors.light.primary,
   },
   destructiveButton: {
     backgroundColor: "#FF6B6B",
   },
   buttonPressed: {
-    opacity: 0.7,
+    opacity: 0.8,
   },
   buttonLoading: {
     opacity: 0.6,
   },
   cancelButtonText: {
     ...theme.textStyles.label_large,
-    color: theme.colors.dark.primary_text,
+    color: "#1A1A1A",
     fontWeight: "600",
   },
   confirmButtonText: {
     ...theme.textStyles.label_large,
-    color: theme.colors.dark.on_primary,
+    color: "#FFF",
     fontWeight: "600",
   },
   destructiveButtonText: {
     ...theme.textStyles.label_large,
-    color: "#fff",
+    color: "#FFF",
     fontWeight: "600",
   },
 });
