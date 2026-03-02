@@ -1,7 +1,7 @@
 import { COLORS } from "@/constants/colors";
 import { theme } from "@/constants/theme";
 import { useAuthState } from "@/Firebase/hooks/useAuth";
-import { useUpdatePregnancyWeek } from "@/Firebase/hooks/useUser";
+import { useUpdateUserProfile } from "@/Firebase/hooks/useUser";
 import React, { useState } from "react";
 import {
     Alert,
@@ -22,7 +22,7 @@ export default function PregnancyWeekForm({
   const { user } = useAuthState();
   const [week, setWeek] = useState("");
   const [loading, setLoading] = useState(false);
-  const updateWeek = useUpdatePregnancyWeek();
+  const updateProfile = useUpdateUserProfile();
 
   const handleSubmit = async () => {
     const weekNumber = parseInt(week);
@@ -44,7 +44,20 @@ export default function PregnancyWeekForm({
 
     setLoading(true);
     try {
-      await updateWeek.mutateAsync({ uid: user.uid, week: weekNumber });
+      // Calculate pregnancy start date based on entered week
+      const today = new Date();
+      const daysToSubtract = (weekNumber - 1) * 7;
+      const pregnancyStartDate = new Date(
+        today.getTime() - daysToSubtract * 24 * 60 * 60 * 1000
+      );
+
+      await updateProfile.mutateAsync({
+        uid: user.uid,
+        updates: {
+          pregnancyWeek: weekNumber,
+          pregnancyStartDate: pregnancyStartDate.toISOString(),
+        },
+      });
       Alert.alert("Success", "Pregnancy week updated successfully!");
       if (onSuccess) onSuccess();
     } catch (error: any) {
@@ -56,6 +69,15 @@ export default function PregnancyWeekForm({
 
   return (
     <View style={styles.container}>
+      {/* Decorative Background Elements */}
+      <View style={styles.backgroundDecoration}>
+        <View style={[styles.decorativeCircle, styles.circle1]} />
+        <View style={[styles.decorativeCircle, styles.circle2]} />
+        <View style={[styles.decorativeCircle, styles.circle3]} />
+        <View style={[styles.decorativeCircle, styles.circle4]} />
+        <View style={[styles.decorativeCircle, styles.circle5]} />
+      </View>
+
       <View style={styles.card}>
         <Text style={styles.title}>Welcome to Baby Growth Tracker!</Text>
         <Text style={styles.subtitle}>
@@ -99,6 +121,55 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: theme.spacing.lg,
+    backgroundColor: "#FFF8FC",
+  },
+  backgroundDecoration: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    overflow: "hidden",
+  },
+  decorativeCircle: {
+    position: "absolute",
+    borderRadius: 9999,
+    opacity: 0.12,
+  },
+  circle1: {
+    width: 180,
+    height: 180,
+    backgroundColor: COLORS.PINK,
+    top: -70,
+    left: -60,
+  },
+  circle2: {
+    width: 140,
+    height: 140,
+    backgroundColor: COLORS.PRIMARY,
+    top: 80,
+    right: -50,
+  },
+  circle3: {
+    width: 160,
+    height: 160,
+    backgroundColor: "#E5D4F5",
+    bottom: 120,
+    left: -70,
+  },
+  circle4: {
+    width: 120,
+    height: 120,
+    backgroundColor: "#FFE5CC",
+    bottom: -40,
+    right: -30,
+  },
+  circle5: {
+    width: 100,
+    height: 100,
+    backgroundColor: COLORS.PRIMARY_LIGHT,
+    top: "45%",
+    right: -45,
   },
   card: {
     backgroundColor: COLORS.WHITE,
@@ -111,6 +182,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 12,
     elevation: 5,
+    zIndex: 1,
   },
   title: {
     fontSize: 24,

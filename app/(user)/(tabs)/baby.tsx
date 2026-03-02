@@ -7,6 +7,16 @@ import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+// Helper function to calculate current pregnancy week based on start date
+const calculateCurrentWeek = (pregnancyStartDate: string): number => {
+  const startDate = new Date(pregnancyStartDate);
+  const today = new Date();
+  const diffTime = Math.abs(today.getTime() - startDate.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  const currentWeek = Math.floor(diffDays / 7) + 1; // +1 because week 1 starts from day 0
+  return Math.min(Math.max(currentWeek, 1), 43); // Clamp between 1 and 43
+};
+
 // Helper function to get baby image based on week
 const getBabyImage = (week: number) => {
   // Map weeks to their corresponding image filenames
@@ -114,10 +124,15 @@ export default function BabyScreen() {
   const { user } = useAuthState();
   const { data: userProfile, refetch } = useUserProfile(user?.uid);
 
-  // Check if pregnancy week is set
-  const hasPregnancyWeek =
-    userProfile?.pregnancyWeek && userProfile.pregnancyWeek > 0;
-  const pregnancyWeek = userProfile?.pregnancyWeek || 24;
+  // Calculate current pregnancy week dynamically
+  const pregnancyStartDate = userProfile?.pregnancyStartDate;
+  const hasPregnancyWeek = !!pregnancyStartDate;
+  
+  // If we have a start date, calculate current week; otherwise use stored week or default
+  const pregnancyWeek = pregnancyStartDate
+    ? calculateCurrentWeek(pregnancyStartDate)
+    : userProfile?.pregnancyWeek || 24;
+    
   const babyImage = getBabyImage(pregnancyWeek);
   const babySize = getBabySizeComparison(pregnancyWeek);
 

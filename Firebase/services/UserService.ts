@@ -14,6 +14,7 @@ export interface UserProfile {
   name: string;
   photoURL?: string;
   pregnancyWeek?: number;
+  pregnancyStartDate?: string; // ISO date string of when pregnancy started
   dueDate?: any; // Can be Date, Firestore Timestamp, or string
   createdAt: any;
   updatedAt?: any;
