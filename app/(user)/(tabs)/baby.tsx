@@ -1,144 +1,165 @@
+import PregnancyWeekForm from "@/components/PregnancyWeekForm";
 import { COLORS } from "@/constants/colors";
 import { theme } from "@/constants/theme";
 import { useAuthState } from "@/Firebase/hooks/useAuth";
 import { useUserProfile } from "@/Firebase/hooks/useUser";
-import { uploadAllBabyWeeks } from "@/scripts/uploadBabyWeeks";
-import { Baby, Upload } from "lucide-react-native";
-import React, { useState } from "react";
-import {
-    ActivityIndicator,
-    Alert,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-} from "react-native";
+import React from "react";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+// Helper function to get baby image based on week
+const getBabyImage = (week: number) => {
+  // Map weeks to their corresponding image filenames
+  const imageMap: { [key: number]: any } = {
+    1: require("@/assets/baby/Week-1&2.png"),
+    2: require("@/assets/baby/Week-1&2.png"),
+    3: require("@/assets/baby/Week-3.png"),
+    4: require("@/assets/baby/Week-4.png"),
+    5: require("@/assets/baby/Week-5.png"),
+    6: require("@/assets/baby/Week-6.png"),
+    7: require("@/assets/baby/Week-7.png"),
+    8: require("@/assets/baby/Week-8.png"),
+    9: require("@/assets/baby/Week-9.png"),
+    10: require("@/assets/baby/Week-10.png"),
+    11: require("@/assets/baby/Week-11.png"),
+    12: require("@/assets/baby/Week-12.png"),
+    13: require("@/assets/baby/Week-13.png"),
+    14: require("@/assets/baby/Week-14.png"),
+    15: require("@/assets/baby/Week-15.png"),
+    16: require("@/assets/baby/Week-16.png"),
+    17: require("@/assets/baby/Week-17.png"),
+    18: require("@/assets/baby/Week-18.png"),
+    19: require("@/assets/baby/Week-19.png"),
+    20: require("@/assets/baby/Week-20.png"),
+    21: require("@/assets/baby/Week-21.png"),
+    22: require("@/assets/baby/Week-22.png"),
+    23: require("@/assets/baby/Week-23.png"),
+    24: require("@/assets/baby/Week-24.png"),
+    25: require("@/assets/baby/Week-25.png"),
+    26: require("@/assets/baby/Week-26.png"),
+    27: require("@/assets/baby/Week-27.png"),
+    28: require("@/assets/baby/Week-28.png"),
+    29: require("@/assets/baby/Week-29.png"),
+    30: require("@/assets/baby/Week-30.png"),
+    31: require("@/assets/baby/Week-31.png"),
+    32: require("@/assets/baby/Week-32.png"),
+    33: require("@/assets/baby/Week-33.png"),
+    34: require("@/assets/baby/Week-34.png"),
+    35: require("@/assets/baby/Week-35.png"),
+    36: require("@/assets/baby/Week-36.png"),
+    37: require("@/assets/baby/Week-37.png"),
+    38: require("@/assets/baby/Week-38.png"),
+    39: require("@/assets/baby/Week-39.png"),
+    40: require("@/assets/baby/Week-40.png"),
+    41: require("@/assets/baby/Week-41.png"),
+    42: require("@/assets/baby/Week-42.png"),
+    43: require("@/assets/baby/Week-43.png"),
+  };
+
+  return imageMap[week] || imageMap[24]; // Default to week 24 if not found
+};
+
+// Helper function to get baby size comparison based on week
+const getBabySizeComparison = (week: number): string => {
+  const sizeMap: { [key: number]: string } = {
+    1: "a poppy seed",
+    2: "a poppy seed",
+    3: "a sesame seed",
+    4: "a poppyseed",
+    5: "a sesame seed",
+    6: "a lentil",
+    7: "a blueberry",
+    8: "a raspberry",
+    9: "a cherry",
+    10: "a kumquat",
+    11: "a fig",
+    12: "a lime",
+    13: "a peapod",
+    14: "a lemon",
+    15: "an apple",
+    16: "an avocado",
+    17: "a pear",
+    18: "a sweet potato",
+    19: "a mango",
+    20: "a banana",
+    21: "a carrot",
+    22: "a papaya",
+    23: "a grapefruit",
+    24: "a cantaloupe",
+    25: "a cauliflower",
+    26: "a scallion",
+    27: "a cabbage",
+    28: "an eggplant",
+    29: "a butternut squash",
+    30: "a large cabbage",
+    31: "a coconut",
+    32: "a jicama",
+    33: "a pineapple",
+    34: "a cantaloupe",
+    35: "a honeydew melon",
+    36: "a romaine lettuce",
+    37: "a bunch of chard",
+    38: "a leek",
+    39: "a mini watermelon",
+    40: "a small pumpkin",
+    41: "a pumpkin",
+    42: "a watermelon",
+    43: "a watermelon",
+  };
+
+  return sizeMap[week] || "a cantaloupe";
+};
 
 export default function BabyScreen() {
   const { user } = useAuthState();
-  const { data: userProfile } = useUserProfile(user?.uid);
-  const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState({
-    current: 0,
-    total: 0,
-    week: 0,
-  });
+  const { data: userProfile, refetch } = useUserProfile(user?.uid);
 
-  const handleUploadAllWeeks = async () => {
-    Alert.alert(
-      "Upload Baby Weeks",
-      "This will upload all 43 baby week images to Firebase. This may take a few minutes. Continue?",
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
-          text: "Upload",
-          onPress: async () => {
-            setUploading(true);
-            setUploadProgress({ current: 0, total: 43, week: 0 });
+  // Check if pregnancy week is set
+  const hasPregnancyWeek =
+    userProfile?.pregnancyWeek && userProfile.pregnancyWeek > 0;
+  const pregnancyWeek = userProfile?.pregnancyWeek || 24;
+  const babyImage = getBabyImage(pregnancyWeek);
+  const babySize = getBabySizeComparison(pregnancyWeek);
 
-            try {
-              await uploadAllBabyWeeks(
-                (current, total, week) => {
-                  setUploadProgress({ current, total, week });
-                },
-                (successful, failed) => {
-                  setUploading(false);
-                  Alert.alert(
-                    "Upload Complete",
-                    `Successfully uploaded: ${successful}\nFailed: ${failed}`,
-                  );
-                  setUploadProgress({ current: 0, total: 0, week: 0 });
-                },
-              );
-            } catch (error: any) {
-              setUploading(false);
-              Alert.alert(
-                "Error",
-                "Failed to upload baby weeks. Please try again.",
-              );
-              console.error("Upload error:", error);
-              setUploadProgress({ current: 0, total: 0, week: 0 });
-            }
-          },
-        },
-      ],
-    );
+  const handleFormSuccess = () => {
+    refetch();
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Baby Growth</Text>
-        </View>
-
-        {/* Upload Button */}
-        <TouchableOpacity
-          style={[
-            styles.uploadButton,
-            uploading && styles.uploadButtonDisabled,
-          ]}
-          onPress={handleUploadAllWeeks}
-          disabled={uploading}
-        >
-          {uploading ? (
-            <View style={styles.uploadButtonContent}>
-              <ActivityIndicator color={COLORS.WHITE} size="small" />
-              <Text style={styles.uploadButtonText}>
-                Uploading Week {uploadProgress.week} ({uploadProgress.current}/
-                {uploadProgress.total})
-              </Text>
-            </View>
-          ) : (
-            <View style={styles.uploadButtonContent}>
-              <Upload size={20} color={COLORS.WHITE} />
-              <Text style={styles.uploadButtonText}>
-                Upload All Baby Week Images
-              </Text>
-            </View>
-          )}
-        </TouchableOpacity>
-
-        <View style={styles.card}>
-          <View style={styles.iconContainer}>
-            <Baby size={48} color={COLORS.PRIMARY} />
+      {!hasPregnancyWeek ? (
+        // Show form if pregnancy week is not set
+        <PregnancyWeekForm onSuccess={handleFormSuccess} />
+      ) : (
+        // Show baby growth info if week is set
+        <View style={styles.content}>
+          <View style={styles.header}>
+            {/* <View style={styles.headerIcon}>
+              <Baby size={24} color={COLORS.PRIMARY} strokeWidth={2.5} />
+            </View> */}
+            <Text style={styles.headerTitle}>Baby Growth</Text>
           </View>
-          <Text style={styles.cardTitle}>
-            Week {userProfile?.pregnancyWeek || "24"}
-          </Text>
-          <Text style={styles.cardSubtitle}>
-            Your baby is about the size of a Cantaloupe!
-          </Text>
-        </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Daily Tips</Text>
-          <View style={styles.tipCard}>
-            <Text style={styles.tipText}>
-              Drink plenty of water today to stay hydrated. Proper hydration is
-              essential for you and your baby's health.
+          {/* Decorative Background Elements */}
+          <View style={styles.backgroundDecoration}>
+            <View style={[styles.decorativeCircle, styles.circle1]} />
+            <View style={[styles.decorativeCircle, styles.circle2]} />
+            <View style={[styles.decorativeCircle, styles.circle3]} />
+            <View style={[styles.decorativeCircle, styles.circle4]} />
+            <View style={[styles.decorativeCircle, styles.circle5]} />
+          </View>
+
+          <View style={styles.imageContainer}>
+            <Image source={babyImage} style={styles.babyImage} />
+          </View>
+          <View style={styles.textContainer}>
+            <Text style={styles.cardTitle}>Week {pregnancyWeek}</Text>
+            <Text style={styles.cardSubtitle}>
+              Your baby is about the size of {babySize}!
             </Text>
           </View>
         </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Development</Text>
-          <View style={styles.infoCard}>
-            <Text style={styles.infoText}>
-              Your baby's organs are developing rapidly. Those little kicks you
-              feel are a sign of healthy movement!
-            </Text>
-          </View>
-        </View>
-      </ScrollView>
+      )}
     </SafeAreaView>
   );
 }
@@ -148,40 +169,128 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.light.background,
   },
-  scrollContent: {
-    padding: theme.spacing.lg,
+  content: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FFF8FC",
   },
   header: {
-    marginBottom: theme.spacing.lg,
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: "700",
-    color: theme.colors.light.primary_text,
-  },
-  card: {
-    backgroundColor: COLORS.WHITE,
-    borderRadius: 24,
-    padding: 24,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
     alignItems: "center",
-    marginBottom: 24,
+    justifyContent: "center",
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    backgroundColor: COLORS.WHITE,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F0F0F0",
+    zIndex: 10,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 3,
+    shadowRadius: 4,
+    elevation: 2,
   },
-  iconContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+  headerIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: COLORS.PINK,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 16,
+    marginRight: 12,
+  },
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: theme.colors.light.primary_text,
+  },
+  backgroundDecoration: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    overflow: "hidden",
+  },
+  decorativeCircle: {
+    position: "absolute",
+    borderRadius: 9999,
+    opacity: 0.15,
+  },
+  circle1: {
+    width: 200,
+    height: 200,
+    backgroundColor: COLORS.PINK,
+    top: -50,
+    left: -70,
+  },
+  circle2: {
+    width: 150,
+    height: 150,
+    backgroundColor: COLORS.PRIMARY_LIGHT,
+    top: 100,
+    right: -60,
+  },
+  circle3: {
+    width: 180,
+    height: 180,
+    backgroundColor: "#E5D4F5",
+    bottom: 150,
+    left: -80,
+  },
+  circle4: {
+    width: 120,
+    height: 120,
+    backgroundColor: "#FFE5CC",
+    bottom: -30,
+    right: -40,
+  },
+  circle5: {
+    width: 100,
+    height: 100,
+    backgroundColor: COLORS.PRIMARY,
+    top: "50%",
+    right: -50,
+  },
+  imageContainer: {
+    flex: 1,
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "transparent",
+    zIndex: 1,
+  },
+  babyImage: {
+    width: "95%",
+    height: "95%",
+    resizeMode: "contain",
+    zIndex: 1,
+  },
+  textContainer: {
+    position: "absolute",
+    bottom: 10,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
+    paddingVertical: 20,
+    paddingHorizontal: 24,
+    marginHorizontal: 20,
+    borderRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 5,
+    zIndex: 2,
   },
   cardTitle: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: "700",
     color: "#1A1A1A",
     marginBottom: 8,
@@ -190,72 +299,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#666",
     textAlign: "center",
-  },
-  section: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: theme.colors.light.primary_text,
-    marginBottom: 12,
-  },
-  tipCard: {
-    backgroundColor: COLORS.WHITE,
-    borderRadius: 16,
-    padding: 16,
-    borderLeftWidth: 4,
-    borderLeftColor: COLORS.PRIMARY,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.03,
-    shadowRadius: 5,
-    elevation: 1,
-  },
-  tipText: {
-    fontSize: 15,
-    color: "#333",
-    lineHeight: 22,
-  },
-  infoCard: {
-    backgroundColor: COLORS.WHITE,
-    borderRadius: 16,
-    padding: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.03,
-    shadowRadius: 5,
-    elevation: 1,
-  },
-  infoText: {
-    fontSize: 15,
-    color: "#666",
-    lineHeight: 22,
-  },
-  uploadButton: {
-    backgroundColor: COLORS.PRIMARY,
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 24,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  uploadButtonDisabled: {
-    opacity: 0.7,
-  },
-  uploadButtonContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
-  },
-  uploadButtonText: {
-    color: COLORS.WHITE,
-    fontSize: 16,
-    fontWeight: "600",
-    marginLeft: 8,
   },
 });
