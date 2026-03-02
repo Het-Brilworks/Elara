@@ -27,7 +27,7 @@ export const uploadBabyWeekImage = async (
 
     const filename = `week_${week}.png`;
     const reference = storage().ref(`baby_weeks/${filename}`);
-    
+
     console.log(`[Week ${week}] Storage path:`, `baby_weeks/${filename}`);
 
     // Upload the file
@@ -38,9 +38,9 @@ export const uploadBabyWeekImage = async (
 
     // Get the download URL
     const downloadURL = await reference.getDownloadURL();
-    
+
     console.log(`[Week ${week}] Download URL:`, downloadURL);
-    
+
     return downloadURL;
   } catch (error) {
     console.error(`[Week ${week}] Upload failed:`, error);
@@ -82,14 +82,16 @@ export const uploadBabyWeek = async (
   try {
     console.log(`\n========== Week ${week} Upload Start ==========`);
     console.log(`File URI check:`, imageUri);
-    
+
     // Validate fileUri
     if (!imageUri) {
       throw new Error(`Invalid fileUri: ${imageUri}`);
     }
-    
-    if (!imageUri.startsWith('file://')) {
-      console.warn(`[Week ${week}] Warning: fileUri doesn't start with file://`);
+
+    if (!imageUri.startsWith("file://")) {
+      console.warn(
+        `[Week ${week}] Warning: fileUri doesn't start with file://`,
+      );
       console.warn(`[Week ${week}] Received:`, imageUri);
     }
 
