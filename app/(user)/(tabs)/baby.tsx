@@ -127,12 +127,12 @@ export default function BabyScreen() {
   // Calculate current pregnancy week dynamically
   const pregnancyStartDate = userProfile?.pregnancyStartDate;
   const hasPregnancyWeek = !!pregnancyStartDate;
-  
+
   // If we have a start date, calculate current week; otherwise use stored week or default
   const pregnancyWeek = pregnancyStartDate
     ? calculateCurrentWeek(pregnancyStartDate)
     : userProfile?.pregnancyWeek || 24;
-    
+
   const babyImage = getBabyImage(pregnancyWeek);
   const babySize = getBabySizeComparison(pregnancyWeek);
 

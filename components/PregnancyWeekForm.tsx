@@ -48,7 +48,7 @@ export default function PregnancyWeekForm({
       const today = new Date();
       const daysToSubtract = (weekNumber - 1) * 7;
       const pregnancyStartDate = new Date(
-        today.getTime() - daysToSubtract * 24 * 60 * 60 * 1000
+        today.getTime() - daysToSubtract * 24 * 60 * 60 * 1000,
       );
 
       await updateProfile.mutateAsync({

@@ -1,9 +1,9 @@
 import {
-  doc,
-  getDoc,
-  onSnapshot,
-  serverTimestamp,
-  updateDoc,
+    doc,
+    getDoc,
+    onSnapshot,
+    serverTimestamp,
+    updateDoc,
 } from "@react-native-firebase/firestore";
 import { firestore } from "../firebase";
 // import storage from "@react-native-firebase/storage";
