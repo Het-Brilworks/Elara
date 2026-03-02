@@ -1,12 +1,13 @@
-import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import { onAuthStateChanged, User } from "@react-native-firebase/auth";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { auth } from "../firebase";
 import {
-  getUserData,
-  login,
-  logout,
-  register,
-  updateProfileCompletion,
+    getUserData,
+    login,
+    logout,
+    register,
+    updateProfileCompletion,
 } from "../services/AuthService";
 
 type AuthPayload = {
@@ -54,14 +55,13 @@ export const useUser = (uid: string | undefined) => {
   });
 };
 
-
 // Hook to check authentication state
 export const useAuthState = () => {
-  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = auth().onAuthStateChanged((user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
     });

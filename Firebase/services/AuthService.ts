@@ -1,5 +1,17 @@
-import auth from "@react-native-firebase/auth";
-import firestore from "@react-native-firebase/firestore";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile,
+} from "@react-native-firebase/auth";
+import {
+  doc,
+  getDoc,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+} from "@react-native-firebase/firestore";
+import { auth, firestore } from "../firebase";
 
 // Helper function to parse Firebase auth errors
 const parseAuthError = (error: any): string => {
@@ -29,26 +41,7 @@ const parseAuthError = (error: any): string => {
 
 export const login = async (email: string, password: string) => {
   try {
-    const userCredential = await auth().signInWithEmailAndPassword(
-      email,
-      password,
-    );
-    const user = userCredential.user;
-
-    // Check if account is soft-deleted
-    const userDoc = await firestore().collection("users").doc(user.uid).get();
-    const userData = userDoc.data();
-
-    if (userData?.isDeleted) {
-      // Sign out the user immediately
-      await auth().signOut();
-      return {
-        success: false,
-        error:
-          "This account has been deleted. Please contact support if you believe this is an error.",
-      };
-    }
-
+    await signInWithEmailAndPassword(auth, email, password);
     return { success: true };
   } catch (error: any) {
     return { success: false, error: parseAuthError(error) };
@@ -61,22 +54,24 @@ export const register = async (
   name: string,
 ) => {
   try {
-    const userCredential = await auth().createUserWithEmailAndPassword(
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
       email,
       password,
     );
     const user = userCredential.user;
 
     // Update profile with display name
-    await user.updateProfile({
+    await updateProfile(user, {
       displayName: name,
     });
 
     // Create user document in Firestore
-    await firestore().collection("users").doc(user.uid).set({
+    const userRef = doc(firestore, "users", user.uid);
+    await setDoc(userRef, {
       email: email,
       name: name,
-      createdAt: firestore.FieldValue.serverTimestamp(),
+      createdAt: serverTimestamp(),
       isVerified: false,
       isProfileCompleted: false,
       isDeleted: false,
@@ -90,7 +85,7 @@ export const register = async (
 
 export const logout = async () => {
   try {
-    await auth().signOut();
+    await signOut(auth);
     return { success: true };
   } catch (error: any) {
     return { success: false, error: parseAuthError(error) };
@@ -99,8 +94,9 @@ export const logout = async () => {
 
 export const getUserData = async (uid: string) => {
   try {
-    const doc = await firestore().collection("users").doc(uid).get();
-    return { success: true, data: doc.data() };
+    const userRef = doc(firestore, "users", uid);
+    const docSnap = await getDoc(userRef);
+    return { success: true, data: docSnap.data() };
   } catch (error: any) {
     return { success: false, error: error.message };
   }
@@ -108,7 +104,8 @@ export const getUserData = async (uid: string) => {
 
 export const updateProfileCompletion = async (uid: string, stage: string) => {
   try {
-    await firestore().collection("users").doc(uid).update({
+    const userRef = doc(firestore, "users", uid);
+    await updateDoc(userRef, {
       isProfileCompleted: true,
       selectedJourney: stage,
     });
