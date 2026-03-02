@@ -1,4 +1,11 @@
-import firestore from "@react-native-firebase/firestore";
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  onSnapshot,
+  serverTimestamp,
+} from "@react-native-firebase/firestore";
+import { firestore } from "../firebase";
 // import storage from "@react-native-firebase/storage";
 
 export interface UserProfile {
@@ -32,11 +39,12 @@ const parseFirestoreError = (error: any): string => {
 
 export const getUserProfile = async (uid: string) => {
   try {
-    const doc = await firestore().collection("users").doc(uid).get();
-    if (!doc.exists()) {
+    const userRef = doc(firestore, "users", uid);
+    const docSnap = await getDoc(userRef);
+    if (!docSnap.exists()) {
       return { success: false, error: "User profile not found" };
     }
-    return { success: true, data: { uid, ...doc.data() } as UserProfile };
+    return { success: true, data: { uid, ...docSnap.data() } as UserProfile };
   } catch (error: any) {
     return { success: false, error: parseFirestoreError(error) };
   }
@@ -47,13 +55,11 @@ export const updateUserProfile = async (
   updates: Partial<UserProfile>,
 ) => {
   try {
-    await firestore()
-      .collection("users")
-      .doc(uid)
-      .update({
-        ...updates,
-        updatedAt: firestore.FieldValue.serverTimestamp(),
-      });
+    const userRef = doc(firestore, "users", uid);
+    await updateDoc(userRef, {
+      ...updates,
+      updatedAt: serverTimestamp(),
+    });
     return { success: true };
   } catch (error: any) {
     return { success: false, error: parseFirestoreError(error) };
@@ -62,9 +68,10 @@ export const updateUserProfile = async (
 
 export const updatePregnancyWeek = async (uid: string, week: number) => {
   try {
-    await firestore().collection("users").doc(uid).update({
+    const userRef = doc(firestore, "users", uid);
+    await updateDoc(userRef, {
       pregnancyWeek: week,
-      updatedAt: firestore.FieldValue.serverTimestamp(),
+      updatedAt: serverTimestamp(),
     });
     return { success: true };
   } catch (error: any) {
@@ -81,9 +88,10 @@ export const uploadProfilePicture = async (uid: string, imageUri: string) => {
     // const photoURL = await reference.getDownloadURL();
 
     // For now, update with the provided URI (TODO: implement storage upload)
-    await firestore().collection("users").doc(uid).update({
+    const userRef = doc(firestore, "users", uid);
+    await updateDoc(userRef, {
       photoURL: imageUri,
-      updatedAt: firestore.FieldValue.serverTimestamp(),
+      updatedAt: serverTimestamp(),
     });
 
     return { success: true, photoURL: imageUri };
@@ -96,20 +104,19 @@ export const subscribeToUserProfile = (
   uid: string,
   onUpdate: (profile: UserProfile | null) => void,
 ) => {
-  return firestore()
-    .collection("users")
-    .doc(uid)
-    .onSnapshot(
-      (doc) => {
-        if (doc.exists()) {
-          onUpdate({ uid, ...doc.data() } as UserProfile);
-        } else {
-          onUpdate(null);
-        }
-      },
-      (error) => {
-        console.error("Error subscribing to user profile:", error);
+  const userRef = doc(firestore, "users", uid);
+  return onSnapshot(
+    userRef,
+    (doc) => {
+      if (doc.exists()) {
+        onUpdate({ uid, ...doc.data() } as UserProfile);
+      } else {
         onUpdate(null);
-      },
-    );
+      }
+    },
+    (error) => {
+      console.error("Error subscribing to user profile:", error);
+      onUpdate(null);
+    },
+  );
 };

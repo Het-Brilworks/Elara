@@ -1,4 +1,15 @@
-import firestore from "@react-native-firebase/firestore";
+import {
+  collection,
+  doc,
+  setDoc,
+  getDoc,
+  getDocs,
+  query,
+  orderBy,
+  onSnapshot,
+  serverTimestamp,
+} from "@react-native-firebase/firestore";
+import { firestore } from "../firebase";
 
 export interface JournalEntry {
   mood: string;
@@ -41,20 +52,17 @@ export const saveMoodEntry = async (
     const today = new Date();
     const docId = formatDateAsDocId(today);
 
-    await firestore()
-      .collection("users")
-      .doc(uid)
-      .collection("journal")
-      .doc(docId)
-      .set(
-        {
-          mood,
-          info: info || "",
-          created_at: firestore.FieldValue.serverTimestamp(),
-          updated_at: firestore.FieldValue.serverTimestamp(),
-        },
-        { merge: true },
-      );
+    const journalRef = doc(firestore, "users", uid, "journal", docId);
+    await setDoc(
+      journalRef,
+      {
+        mood,
+        info: info || "",
+        created_at: serverTimestamp(),
+        updated_at: serverTimestamp(),
+      },
+      { merge: true },
+    );
 
     return { success: true };
   } catch (error: any) {
@@ -68,18 +76,15 @@ export const updateJournalInfo = async (uid: string, info: string) => {
     const today = new Date();
     const docId = formatDateAsDocId(today);
 
-    await firestore()
-      .collection("users")
-      .doc(uid)
-      .collection("journal")
-      .doc(docId)
-      .set(
-        {
-          info,
-          updated_at: firestore.FieldValue.serverTimestamp(),
-        },
-        { merge: true },
-      );
+    const journalRef = doc(firestore, "users", uid, "journal", docId);
+    await setDoc(
+      journalRef,
+      {
+        info,
+        updated_at: serverTimestamp(),
+      },
+      { merge: true },
+    );
 
     return { success: true };
   } catch (error: any) {
@@ -91,18 +96,14 @@ export const updateJournalInfo = async (uid: string, info: string) => {
 export const getJournalEntry = async (uid: string, date: Date) => {
   try {
     const docId = formatDateAsDocId(date);
-    const doc = await firestore()
-      .collection("users")
-      .doc(uid)
-      .collection("journal")
-      .doc(docId)
-      .get();
+    const journalRef = doc(firestore, "users", uid, "journal", docId);
+    const docSnap = await getDoc(journalRef);
 
-    if (!doc.exists()) {
+    if (!docSnap.exists()) {
       return { success: true, data: null };
     }
 
-    return { success: true, data: doc.data() as JournalEntry };
+    return { success: true, data: docSnap.data() as JournalEntry };
   } catch (error: any) {
     return { success: false, error: parseFirestoreError(error) };
   }
@@ -116,12 +117,9 @@ export const getTodayJournalEntry = async (uid: string) => {
 // Get all journal entries for a user
 export const getAllJournalEntries = async (uid: string) => {
   try {
-    const snapshot = await firestore()
-      .collection("users")
-      .doc(uid)
-      .collection("journal")
-      .orderBy("created_at", "desc")
-      .get();
+    const journalCol = collection(firestore, "users", uid, "journal");
+    const q = query(journalCol, orderBy("created_at", "desc"));
+    const snapshot = await getDocs(q);
 
     const entries = snapshot.docs.map((doc) => ({
       id: doc.id,
@@ -142,24 +140,21 @@ export const subscribeToTodayJournal = (
   const today = new Date();
   const docId = formatDateAsDocId(today);
 
-  return firestore()
-    .collection("users")
-    .doc(uid)
-    .collection("journal")
-    .doc(docId)
-    .onSnapshot(
-      (doc) => {
-        if (doc.exists()) {
-          onUpdate(doc.data() as JournalEntry);
-        } else {
-          onUpdate(null);
-        }
-      },
-      (error) => {
-        console.error("Error subscribing to journal entry:", error);
+  const journalRef = doc(firestore, "users", uid, "journal", docId);
+  return onSnapshot(
+    journalRef,
+    (doc) => {
+      if (doc.exists()) {
+        onUpdate(doc.data() as JournalEntry);
+      } else {
         onUpdate(null);
-      },
-    );
+      }
+    },
+    (error) => {
+      console.error("Error subscribing to journal entry:", error);
+      onUpdate(null);
+    },
+  );
 };
 
 // Get journal entries for the last N days
@@ -174,15 +169,11 @@ export const getLastNDaysJournal = async (uid: string, days: number = 7) => {
       date.setDate(today.getDate() - i);
       const docId = formatDateAsDocId(date);
 
-      const doc = await firestore()
-        .collection("users")
-        .doc(uid)
-        .collection("journal")
-        .doc(docId)
-        .get();
+      const journalRef = doc(firestore, "users", uid, "journal", docId);
+      const docSnap = await getDoc(journalRef);
 
-      if (doc.exists()) {
-        entries[docId] = doc.data() as JournalEntry;
+      if (docSnap.exists()) {
+        entries[docId] = docSnap.data() as JournalEntry;
       }
     }
 
