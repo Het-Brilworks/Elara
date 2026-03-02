@@ -22,17 +22,28 @@ export const uploadBabyWeekImage = async (
   week: number,
 ): Promise<string> => {
   try {
+    console.log(`[Week ${week}] Starting upload...`);
+    console.log(`[Week ${week}] File URI:`, imageUri);
+
     const filename = `week_${week}.png`;
-    const reference = storage().ref(`${STORAGE_FOLDER}/${filename}`);
+    const reference = storage().ref(`baby_weeks/${filename}`);
+    
+    console.log(`[Week ${week}] Storage path:`, `baby_weeks/${filename}`);
 
     // Upload the file
+    console.log(`[Week ${week}] Uploading file...`);
     await reference.putFile(imageUri);
+
+    console.log(`[Week ${week}] Upload success! Getting download URL...`);
 
     // Get the download URL
     const downloadURL = await reference.getDownloadURL();
+    
+    console.log(`[Week ${week}] Download URL:`, downloadURL);
+    
     return downloadURL;
   } catch (error) {
-    console.error(`Error uploading image for week ${week}:`, error);
+    console.error(`[Week ${week}] Upload failed:`, error);
     throw error;
   }
 };
@@ -69,15 +80,30 @@ export const uploadBabyWeek = async (
   week: number,
 ): Promise<void> => {
   try {
+    console.log(`\n========== Week ${week} Upload Start ==========`);
+    console.log(`File URI check:`, imageUri);
+    
+    // Validate fileUri
+    if (!imageUri) {
+      throw new Error(`Invalid fileUri: ${imageUri}`);
+    }
+    
+    if (!imageUri.startsWith('file://')) {
+      console.warn(`[Week ${week}] Warning: fileUri doesn't start with file://`);
+      console.warn(`[Week ${week}] Received:`, imageUri);
+    }
+
     // Upload image to Storage
     const imageUrl = await uploadBabyWeekImage(imageUri, week);
 
     // Create Firestore document
     await createBabyWeekDocument(week, imageUrl);
 
-    console.log(`Successfully uploaded week ${week}`);
+    console.log(`✓ Week ${week} fully uploaded (Storage + Firestore)`);
+    console.log(`========== Week ${week} Upload Complete ==========\n`);
   } catch (error) {
-    console.error(`Error uploading baby week ${week}:`, error);
+    console.error(`\n✗ Week ${week} upload failed:`, error);
+    console.error(`========== Week ${week} Upload Failed ==========\n`);
     throw error;
   }
 };
