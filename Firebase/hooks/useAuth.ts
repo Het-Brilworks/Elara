@@ -3,11 +3,11 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { auth } from "../firebase";
 import {
-  getUserData,
-  login,
-  logout,
-  register,
-  updateProfileCompletion,
+    getUserData,
+    login,
+    logout,
+    register,
+    updateProfileCompletion,
 } from "../services/AuthService";
 
 type AuthPayload = {
@@ -54,7 +54,6 @@ export const useUser = (uid: string | undefined) => {
     enabled: !!uid,
   });
 };
-
 
 // Hook to check authentication state
 export const useAuthState = () => {

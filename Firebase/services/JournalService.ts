@@ -1,13 +1,13 @@
 import {
-  collection,
-  doc,
-  setDoc,
-  getDoc,
-  getDocs,
-  query,
-  orderBy,
-  onSnapshot,
-  serverTimestamp,
+    collection,
+    doc,
+    getDoc,
+    getDocs,
+    onSnapshot,
+    orderBy,
+    query,
+    serverTimestamp,
+    setDoc,
 } from "@react-native-firebase/firestore";
 import { firestore } from "../firebase";
 

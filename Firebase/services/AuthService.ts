@@ -1,16 +1,15 @@
 import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  updateProfile,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signOut,
+    updateProfile,
 } from "@react-native-firebase/auth";
 import {
-  collection,
-  doc,
-  setDoc,
-  getDoc,
-  updateDoc,
-  serverTimestamp,
+    doc,
+    getDoc,
+    serverTimestamp,
+    setDoc,
+    updateDoc
 } from "@react-native-firebase/firestore";
 import { auth, firestore } from "../firebase";
 
@@ -114,4 +113,3 @@ export const updateProfileCompletion = async (uid: string, stage: string) => {
     return { success: false, error: error.message };
   }
 };
-
