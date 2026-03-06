@@ -191,6 +191,16 @@ export default function AuthScreen() {
                   editable={!isLoading}
                 />
 
+                {/* Forgot Password Link */}
+                <Pressable
+                  onPress={() => router.push("/forgot-password")}
+                  style={styles.forgotPasswordContainer}
+                >
+                  <Text style={styles.forgotPasswordText}>
+                    Forgot Password?
+                  </Text>
+                </Pressable>
+
                 <Pressable
                   style={({ pressed }) => [
                     styles.primaryButton,
@@ -298,6 +308,15 @@ const styles = StyleSheet.create({
     color: theme.colors.light.secondary_text,
   },
   signInLink: {
+    ...theme.textStyles.body_medium,
+    color: COLORS.PRIMARY,
+    fontWeight: "600",
+  },
+  forgotPasswordContainer: {
+    alignSelf: "flex-end",
+    marginTop: theme.spacing.xs,
+  },
+  forgotPasswordText: {
     ...theme.textStyles.body_medium,
     color: COLORS.PRIMARY,
     fontWeight: "600",

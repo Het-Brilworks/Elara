@@ -1,5 +1,6 @@
 import {
     createUserWithEmailAndPassword,
+    sendPasswordResetEmail,
     signInWithEmailAndPassword,
     signOut,
     updateProfile,
@@ -49,8 +50,11 @@ export const login = async (email: string, password: string) => {
     );
     const user = userCredential.user;
 
-    // Initialize FCM and save token
-    await initializeFCM(user.uid);
+    // Initialize FCM and save token (non-blocking)
+    // If FCM fails, we still allow login to succeed
+    initializeFCM(user.uid).catch((error) => {
+      console.warn("FCM initialization failed, but login succeeded:", error);
+    });
 
     return { success: true };
   } catch (error: any) {
@@ -97,9 +101,12 @@ export const logout = async () => {
   try {
     const user = auth.currentUser;
 
-    // Remove FCM token before signing out
+    // Remove FCM token before signing out (non-blocking)
+    // If FCM cleanup fails, we still allow logout to succeed
     if (user) {
-      await cleanupFCM(user.uid);
+      cleanupFCM(user.uid).catch((error) => {
+        console.warn("FCM cleanup failed, but logout succeeded:", error);
+      });
     }
 
     await signOut(auth);
@@ -129,5 +136,14 @@ export const updateProfileCompletion = async (uid: string, stage: string) => {
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };
+  }
+};
+
+export const resetPassword = async (email: string) => {
+  try {
+    await sendPasswordResetEmail(auth, email);
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: parseAuthError(error) };
   }
 };

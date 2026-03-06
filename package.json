@@ -12,6 +12,7 @@
     "format": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix && prettier \"**/*.{js,jsx,ts,tsx,json}\" --write",
     "web": "expo start --web",
     "upload:meditations": "node scripts/uploadMeditations.js",
+    "upload:yoga": "node scripts/uploadYogaVideos.js",
     "build:android:develop": "npx eas build --platform android --profile develop --non-interactive",
     "build:ios:develop": "npx eas build --platform ios --profile develop --non-interactive",
     "build:ios:production:local": "npx eas build --platform ios --profile production --local",
@@ -61,7 +62,8 @@
     "react-native-safe-area-context": "~5.6.0",
     "react-native-screens": "~4.16.0",
     "react-native-web": "~0.21.0",
-    "react-native-worklets": "0.5.1"
+    "react-native-worklets": "0.5.1",
+    "react-native-youtube-iframe": "^2.4.1"
   },
   "devDependencies": {
     "@types/react": "~19.1.0",

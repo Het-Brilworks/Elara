@@ -7,6 +7,7 @@ import {
     login,
     logout,
     register,
+    resetPassword,
     updateProfileCompletion,
 } from "../services/AuthService";
 
@@ -31,6 +32,12 @@ export const useRegister = () => {
   return useMutation({
     mutationFn: ({ email, password, name }: RegisterPayload) =>
       register(email, password, name),
+  });
+};
+
+export const useForgotPassword = () => {
+  return useMutation({
+    mutationFn: ({ email }: { email: string }) => resetPassword(email),
   });
 };
 

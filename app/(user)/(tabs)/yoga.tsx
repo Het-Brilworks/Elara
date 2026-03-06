@@ -81,6 +81,7 @@ export default function YogaScreen() {
                   duration: "20 Minutes",
                   type: "Vinyasa",
                   stage: "First Trimester",
+                  youtubeUrl: "YOUR_YOUTUBE_URL_1",
                 },
               })
             }
@@ -100,6 +101,7 @@ export default function YogaScreen() {
                   duration: "15 Minutes",
                   type: "Therapeutic",
                   stage: "All Trimesters",
+                  youtubeUrl: "YOUR_YOUTUBE_URL_2",
                 },
               })
             }
@@ -138,6 +140,7 @@ export default function YogaScreen() {
                       duration: "12 Minutes",
                       type: "Gentle",
                       stage: "Second Trimester",
+                      youtubeUrl: "YOUR_YOUTUBE_URL_3",
                     },
                   })
                 }
@@ -155,6 +158,7 @@ export default function YogaScreen() {
                       duration: "18 Minutes",
                       type: "Slow Flow",
                       stage: "Second Trimester",
+                      youtubeUrl: "YOUR_YOUTUBE_URL_4",
                     },
                   })
                 }
@@ -172,6 +176,7 @@ export default function YogaScreen() {
                       duration: "15 Minutes",
                       type: "Gentle",
                       stage: "Second Trimester",
+                      youtubeUrl: "YOUR_YOUTUBE_URL_5",
                     },
                   })
                 }
@@ -197,6 +202,7 @@ export default function YogaScreen() {
                   duration: "30 Minutes",
                   type: "Hatha",
                   stage: "All Trimesters",
+                  youtubeUrl: "YOUR_YOUTUBE_URL_6",
                 },
               })
             }

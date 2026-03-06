@@ -1,0 +1,406 @@
+{
+  "yogaVideos": [
+    {
+      "id": "1",
+      "title": "Pregnancy Yoga With Classical Music For Baby Brain Development",
+      "duration": 1800,
+      "durationText": "30 min",
+      "youtubeUrl": "https://youtu.be/61fn83zkpoc",
+      "thumbnailUrl": "https://img.youtube.com/vi/61fn83zkpoc/maxresdefault.jpg",
+      "instructor": "Yoga Instructor",
+      "level": "Beginner",
+      "type": "Gentle",
+      "category": "prenatal_yoga",
+      "pregnancyStage": "all_trimesters",
+      "trimester": ["first", "second", "third"],
+      "description": "A gentle pregnancy yoga session accompanied by classical music designed to support your baby's brain development. This practice combines safe movements with soothing melodies for a nurturing experience.",
+      "benefits": [
+        "Baby brain development",
+        "Relaxation and stress relief",
+        "Gentle stretching",
+        "Connection with baby",
+        "Improved flexibility"
+      ],
+      "instructions": "Find a comfortable space with a yoga mat. Wear comfortable clothing. Listen to your body and modify poses as needed. Stay hydrated throughout the practice.",
+      "bestFor": ["any_trimester", "morning", "evening", "bonding"],
+      "difficulty": "beginner",
+      "tags": ["classical_music", "brain_development", "gentle", "relaxing"],
+      "isActive": true,
+      "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "2",
+      "title": "PREGNANCY LOWER BACK PAIN RELIEF",
+      "duration": 600,
+      "durationText": "10 min",
+      "youtubeUrl": "https://youtu.be/4NwQKXpWN_A",
+      "thumbnailUrl": "https://img.youtube.com/vi/4NwQKXpWN_A/maxresdefault.jpg",
+      "instructor": "sarahbethyoga",
+      "level": "Beginner",
+      "type": "Gentle",
+      "category": "therapeutic",
+      "pregnancyStage": "all_trimesters",
+      "trimester": ["first", "second", "third"],
+      "description": "Quick and effective lower back pain relief specifically designed for pregnancy. Gentle stretches and movements to alleviate common pregnancy back discomfort in just 10 minutes.",
+      "benefits": [
+        "Relieves lower back pain",
+        "Reduces tension and stiffness",
+        "Improves spinal alignment",
+        "Safe for all trimesters",
+        "Quick relief in 10 minutes"
+      ],
+      "instructions": "Use a yoga mat or comfortable surface. Move slowly and listen to your body. Use pillows or blocks for support. Stop if you feel any pain or discomfort.",
+      "bestFor": ["any_trimester", "back_pain", "quick_relief", "evening"],
+      "difficulty": "beginner",
+      "tags": [
+        "back_pain",
+        "lower_back",
+        "pain_relief",
+        "gentle",
+        "therapeutic"
+      ],
+      "isActive": true,
+      "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "3",
+      "title": "Prenatal Yoga - 5 Poses for All Trimesters",
+      "duration": 2100,
+      "durationText": "35 min",
+      "youtubeUrl": "https://youtu.be/0cKnStmV1dI",
+      "thumbnailUrl": "https://img.youtube.com/vi/0cKnStmV1dI/maxresdefault.jpg",
+      "instructor": "Adriene",
+      "level": "All Levels",
+      "type": "Gentle",
+      "category": "prenatal_yoga",
+      "pregnancyStage": "all_trimesters",
+      "trimester": ["first", "second", "third"],
+      "description": "Join Adriene for a complete prenatal yoga session featuring 5 essential poses that are safe and beneficial for all stages of pregnancy. A comprehensive practice for expecting mothers.",
+      "benefits": [
+        "Safe for all trimesters",
+        "Improves flexibility and strength",
+        "Reduces pregnancy discomfort",
+        "Prepares body for labor",
+        "Promotes relaxation and mindfulness"
+      ],
+      "instructions": "Have a yoga mat, pillows, and water nearby. Modify poses as needed for your comfort. Take breaks whenever necessary. Focus on breathing throughout the practice.",
+      "bestFor": [
+        "any_trimester",
+        "full_body_workout",
+        "daily_practice",
+        "all_levels"
+      ],
+      "difficulty": "beginner",
+      "tags": [
+        "prenatal",
+        "all_trimesters",
+        "adriene",
+        "complete_practice",
+        "safe_poses"
+      ],
+      "isActive": true,
+      "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "4",
+      "title": "full body pregnancy pilates workout for all trimesters",
+      "duration": 1200,
+      "durationText": "20 min",
+      "youtubeUrl": "https://youtu.be/nVNf1BAeomE",
+      "thumbnailUrl": "https://img.youtube.com/vi/nVNf1BAeomE/maxresdefault.jpg",
+      "instructor": "lidiav mera",
+      "level": "Beginner",
+      "type": "Pilates",
+      "category": "prenatal_fitness",
+      "pregnancyStage": "all_trimesters",
+      "trimester": ["first", "second", "third"],
+      "description": "A full body pregnancy pilates workout that's safe and effective for all stages of pregnancy. Low-impact exercises to strengthen, tone, and improve overall fitness during pregnancy.",
+      "benefits": [
+        "Strengthens entire body",
+        "Improves core stability",
+        "Safe for all trimesters",
+        "Increases flexibility",
+        "Boosts energy levels"
+      ],
+      "instructions": "Perform on a yoga mat or soft surface. Keep movements controlled and precise. Focus on core engagement while protecting your belly. Breathe steadily throughout.",
+      "bestFor": ["any_trimester", "strength_training", "full_body", "morning"],
+      "difficulty": "beginner",
+      "tags": [
+        "pilates",
+        "full_body",
+        "strength",
+        "all_trimesters",
+        "low_impact"
+      ],
+      "isActive": true,
+      "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "5",
+      "title": "PREGNANCY YOGA | All Trimesters + Levels | Deep Full Body Stretch ",
+      "duration": 1800,
+      "durationText": "30 min",
+      "youtubeUrl": "https://youtu.be/pvFcXk2mtvA",
+      "thumbnailUrl": "https://img.youtube.com/vi/pvFcXk2mtvA/maxresdefault.jpg",
+      "instructor": "Eleni",
+      "level": "All Levels",
+      "type": "Stretching",
+      "category": "prenatal_yoga",
+      "pregnancyStage": "all_trimesters",
+      "trimester": ["first", "second", "third"],
+      "description": "A comprehensive pregnancy yoga session featuring deep, full body stretches suitable for all trimesters and fitness levels. Release tension, improve flexibility, and feel amazing throughout your pregnancy.",
+      "benefits": [
+        "Deep full body stretching",
+        "Releases muscle tension",
+        "Improves flexibility",
+        "Safe for all levels",
+        "Reduces pregnancy aches"
+      ],
+      "instructions": "Have yoga blocks or cushions nearby for support. Move slowly into each stretch. Never bounce or force a stretch. Hold stretches for several breaths. Stay hydrated.",
+      "bestFor": [
+        "any_trimester",
+        "flexibility",
+        "tension_relief",
+        "all_levels"
+      ],
+      "difficulty": "beginner",
+      "tags": [
+        "stretching",
+        "full_body",
+        "all_trimesters",
+        "flexibility",
+        "deep_stretch"
+      ],
+      "isActive": true,
+      "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "6",
+      "title": "BEDTIME YOGA",
+      "duration": 1200,
+      "durationText": "20 min",
+      "youtubeUrl": "https://youtu.be/6CueZ4zujMk",
+      "thumbnailUrl": "https://img.youtube.com/vi/6CueZ4zujMk/maxresdefault.jpg",
+      "instructor": "Eleni",
+      "level": "Beginner",
+      "type": "Restorative",
+      "category": "relaxation",
+      "pregnancyStage": "all_trimesters",
+      "trimester": ["first", "second", "third"],
+      "description": "Wind down before sleep with this gentle bedtime yoga routine designed for pregnancy. Calming poses and breathing techniques to help you relax and prepare for restful sleep.",
+      "benefits": [
+        "Promotes better sleep",
+        "Reduces bedtime anxiety",
+        "Relaxes body and mind",
+        "Calms nervous system",
+        "Relieves pregnancy insomnia"
+      ],
+      "instructions": "Practice in comfortable sleepwear. Dim the lights. Use pillows for extra comfort. Do this routine in bed or on a mat beside your bed. Focus on slow, calming breaths.",
+      "bestFor": [
+        "any_trimester",
+        "bedtime",
+        "sleep_preparation",
+        "relaxation"
+      ],
+      "difficulty": "beginner",
+      "tags": ["bedtime", "sleep", "relaxation", "restorative", "evening"],
+      "isActive": true,
+      "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "7",
+      "title": "Home Yoga Practice",
+      "duration": 1420,
+      "durationText": "22 min",
+      "youtubeUrl": "https://youtu.be/-3bvlFKeLRE",
+      "thumbnailUrl": "https://img.youtube.com/vi/-3bvlFKeLRE/maxresdefault.jpg",
+      "instructor": "Elena Rae",
+      "level": "Beginner",
+      "type": "Gentle",
+      "category": "home_practice",
+      "pregnancyStage": "all_trimesters",
+      "trimester": ["first", "second", "third"],
+      "description": "A complete home yoga practice designed for convenience and comfort during pregnancy. No special equipment needed - perfect for practicing in your own space at your own pace.",
+      "benefits": [
+        "Convenient home practice",
+        "No equipment needed",
+        "Full body workout",
+        "Increases energy",
+        "Improves flexibility and strength"
+      ],
+      "instructions": "Find a comfortable space at home. Wear comfortable clothing. Follow along at your own pace. Modify poses as needed for your comfort and trimester.",
+      "bestFor": [
+        "any_trimester",
+        "home_workout",
+        "daily_practice",
+        "convenience"
+      ],
+      "difficulty": "beginner",
+      "tags": [
+        "home_practice",
+        "no_equipment",
+        "gentle",
+        "convenient",
+        "daily_yoga"
+      ],
+      "isActive": true,
+      "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "8",
+      "title": "Home Yoga Practice",
+      "duration": 1420,
+      "durationText": "22 min",
+      "youtubeUrl": "https://youtu.be/-3bvlFKeLRE",
+      "thumbnailUrl": "https://img.youtube.com/vi/-3bvlFKeLRE/maxresdefault.jpg",
+      "instructor": "Elena Rae",
+      "level": "Beginner",
+      "type": "Gentle",
+      "category": "home_practice",
+      "pregnancyStage": "all_trimesters",
+      "trimester": ["first", "second", "third"],
+      "description": "A complete home yoga practice designed for convenience and comfort during pregnancy. No special equipment needed - perfect for practicing in your own space at your own pace.",
+      "benefits": [
+        "Convenient home practice",
+        "No equipment needed",
+        "Full body workout",
+        "Increases energy",
+        "Improves flexibility and strength"
+      ],
+      "instructions": "Find a comfortable space at home. Wear comfortable clothing. Follow along at your own pace. Modify poses as needed for your comfort and trimester.",
+      "bestFor": [
+        "any_trimester",
+        "home_workout",
+        "daily_practice",
+        "convenience"
+      ],
+      "difficulty": "beginner",
+      "tags": [
+        "home_practice",
+        "no_equipment",
+        "gentle",
+        "convenient",
+        "daily_yoga"
+      ],
+      "isActive": true,
+      "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "9",
+      "title": "Home Yoga Practice",
+      "duration": 1420,
+      "durationText": "22 min",
+      "youtubeUrl": "https://youtu.be/-3bvlFKeLRE",
+      "thumbnailUrl": "https://img.youtube.com/vi/-3bvlFKeLRE/maxresdefault.jpg",
+      "instructor": "Elena Rae",
+      "level": "Beginner",
+      "type": "Gentle",
+      "category": "home_practice",
+      "pregnancyStage": "all_trimesters",
+      "trimester": ["first", "second", "third"],
+      "description": "A complete home yoga practice designed for convenience and comfort during pregnancy. No special equipment needed - perfect for practicing in your own space at your own pace.",
+      "benefits": [
+        "Convenient home practice",
+        "No equipment needed",
+        "Full body workout",
+        "Increases energy",
+        "Improves flexibility and strength"
+      ],
+      "instructions": "Find a comfortable space at home. Wear comfortable clothing. Follow along at your own pace. Modify poses as needed for your comfort and trimester.",
+      "bestFor": [
+        "any_trimester",
+        "home_workout",
+        "daily_practice",
+        "convenience"
+      ],
+      "difficulty": "beginner",
+      "tags": [
+        "home_practice",
+        "no_equipment",
+        "gentle",
+        "convenient",
+        "daily_yoga"
+      ],
+      "isActive": true,
+      "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "10",
+      "title": "Home Yoga Practice",
+      "duration": 1420,
+      "durationText": "22 min",
+      "youtubeUrl": "https://youtu.be/-3bvlFKeLRE",
+      "thumbnailUrl": "https://img.youtube.com/vi/-3bvlFKeLRE/maxresdefault.jpg",
+      "instructor": "Elena Rae",
+      "level": "Beginner",
+      "type": "Gentle",
+      "category": "home_practice",
+      "pregnancyStage": "all_trimesters",
+      "trimester": ["first", "second", "third"],
+      "description": "A complete home yoga practice designed for convenience and comfort during pregnancy. No special equipment needed - perfect for practicing in your own space at your own pace.",
+      "benefits": [
+        "Convenient home practice",
+        "No equipment needed",
+        "Full body workout",
+        "Increases energy",
+        "Improves flexibility and strength"
+      ],
+      "instructions": "Find a comfortable space at home. Wear comfortable clothing. Follow along at your own pace. Modify poses as needed for your comfort and trimester.",
+      "bestFor": [
+        "any_trimester",
+        "home_workout",
+        "daily_practice",
+        "convenience"
+      ],
+      "difficulty": "beginner",
+      "tags": [
+        "home_practice",
+        "no_equipment",
+        "gentle",
+        "convenient",
+        "daily_yoga"
+      ],
+      "isActive": true,
+      "createdAt": "2026-03-06T00:00:00Z"
+    },
+    {
+      "id": "11",
+      "title": "Home Yoga Practice",
+      "duration": 1420,
+      "durationText": "22 min",
+      "youtubeUrl": "https://youtu.be/-3bvlFKeLRE",
+      "thumbnailUrl": "https://img.youtube.com/vi/-3bvlFKeLRE/maxresdefault.jpg",
+      "instructor": "Elena Rae",
+      "level": "Beginner",
+      "type": "Gentle",
+      "category": "home_practice",
+      "pregnancyStage": "all_trimesters",
+      "trimester": ["first", "second", "third"],
+      "description": "A complete home yoga practice designed for convenience and comfort during pregnancy. No special equipment needed - perfect for practicing in your own space at your own pace.",
+      "benefits": [
+        "Convenient home practice",
+        "No equipment needed",
+        "Full body workout",
+        "Increases energy",
+        "Improves flexibility and strength"
+      ],
+      "instructions": "Find a comfortable space at home. Wear comfortable clothing. Follow along at your own pace. Modify poses as needed for your comfort and trimester.",
+      "bestFor": [
+        "any_trimester",
+        "home_workout",
+        "daily_practice",
+        "convenience"
+      ],
+      "difficulty": "beginner",
+      "tags": [
+        "home_practice",
+        "no_equipment",
+        "gentle",
+        "convenient",
+        "daily_yoga"
+      ],
+      "isActive": true,
+      "createdAt": "2026-03-06T00:00:00Z"
+    }
+  ]
+}

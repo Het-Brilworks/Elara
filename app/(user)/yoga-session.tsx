@@ -1,18 +1,16 @@
 import { theme } from "@/constants/theme";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useVideoPlayer, VideoView } from "expo-video";
 import {
-    ArrowLeft,
-    CheckCircle2,
-    Clock,
-    Play,
-    Star,
+  ArrowLeft,
+  CheckCircle2,
+  Clock,
+  Play,
+  Star,
 } from "lucide-react-native";
-import React from "react";
+import React, { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-const yogaVideo = require("@/assets/videos/3760968-uhd_3840_2160_25fps.mp4");
+import YoutubePlayer from "react-native-youtube-iframe";
 
 export default function YogaSessionScreen() {
   const router = useRouter();
@@ -22,11 +20,28 @@ export default function YogaSessionScreen() {
   const duration = (params.duration as string) || "15 Minutes";
   const type = (params.type as string) || "Gentle";
   const stage = (params.stage as string) || "First Trimester";
+  const youtubeUrl = (params.youtubeUrl as string) || "";
 
-  const player = useVideoPlayer(yogaVideo, (player) => {
-    player.loop = true;
-    player.play();
-  });
+  // Extract YouTube video ID from URL
+  const getYoutubeVideoId = (url: string): string => {
+    if (!url) return "dQw4w9WgXcQ"; // Default video ID
+
+    // Handle different YouTube URL formats
+    const patterns = [
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+      /^([a-zA-Z0-9_-]{11})$/, // Direct video ID
+    ];
+
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match) return match[1];
+    }
+
+    return url; // Assume it's already a video ID
+  };
+
+  const videoId = getYoutubeVideoId(youtubeUrl);
+  const [playing, setPlaying] = useState(false);
 
   const benefits = [
     "Eases nausea",
@@ -52,11 +67,15 @@ export default function YogaSessionScreen() {
       >
         {/* Video Player */}
         <View style={styles.videoContainer}>
-          <VideoView
-            style={styles.video}
-            player={player}
-            allowsFullscreen
-            allowsPictureInPicture
+          <YoutubePlayer
+            height={220}
+            videoId={videoId}
+            play={playing}
+            onChangeState={(state) => {
+              if (state === "ended") {
+                setPlaying(false);
+              }
+            }}
           />
         </View>
 
