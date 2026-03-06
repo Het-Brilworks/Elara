@@ -12,6 +12,10 @@ import {
   updateDoc,
 } from "@react-native-firebase/firestore";
 import { auth, firestore } from "../firebase";
+import {
+  cleanupFCM,
+  initializeFCM,
+} from "./NotificationService";
 
 // Helper function to parse Firebase auth errors
 const parseAuthError = (error: any): string => {
@@ -41,7 +45,16 @@ const parseAuthError = (error: any): string => {
 
 export const login = async (email: string, password: string) => {
   try {
-    await signInWithEmailAndPassword(auth, email, password);
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password,
+    );
+    const user = userCredential.user;
+
+    // Initialize FCM and save token
+    await initializeFCM(user.uid);
+
     return { success: true };
   } catch (error: any) {
     return { success: false, error: parseAuthError(error) };
@@ -85,6 +98,13 @@ export const register = async (
 
 export const logout = async () => {
   try {
+    const user = auth.currentUser;
+
+    // Remove FCM token before signing out
+    if (user) {
+      await cleanupFCM(user.uid);
+    }
+
     await signOut(auth);
     return { success: true };
   } catch (error: any) {

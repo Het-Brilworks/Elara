@@ -58,7 +58,7 @@ export const removeFromFavorites = async (
 /**
  * Check if item is favorited
  */
-export const isFavorited = async (
+export const checkIsFavorited = async (
   userId: string,
   itemId: string,
   itemType: "meditation" | "yoga",
@@ -66,12 +66,12 @@ export const isFavorited = async (
   try {
     const favoriteId = `${userId}_${itemType}_${itemId}`;
 
-    const doc = await firestore()
+    const docSnapshot = await firestore()
       .collection(FAVORITES_COLLECTION)
       .doc(favoriteId)
       .get();
 
-    return doc.exists;
+    return docSnapshot.data() !== undefined;
   } catch (error) {
     console.error("Error checking favorite status:", error);
     return false;
@@ -90,7 +90,6 @@ export const getUserFavorites = async (
       .collection(FAVORITES_COLLECTION)
       .where("userId", "==", userId)
       .where("itemType", "==", itemType)
-      .orderBy("favoritedAt", "desc")
       .get();
 
     return snapshot.docs.map((doc) => doc.data().itemId);
@@ -110,7 +109,6 @@ export const getAllUserFavorites = async (
     const snapshot = await firestore()
       .collection(FAVORITES_COLLECTION)
       .where("userId", "==", userId)
-      .orderBy("favoritedAt", "desc")
       .get();
 
     return snapshot.docs.map((doc) => ({
@@ -132,7 +130,7 @@ export const toggleFavorite = async (
   itemType: "meditation" | "yoga",
 ): Promise<{ success: boolean; isFavorited: boolean; error?: string }> => {
   try {
-    const favorited = await isFavorited(userId, itemId, itemType);
+    const favorited = await checkIsFavorited(userId, itemId, itemType);
 
     if (favorited) {
       const result = await removeFromFavorites(userId, itemId, itemType);
@@ -146,3 +144,6 @@ export const toggleFavorite = async (
     return { success: false, isFavorited: false, error: error.message };
   }
 };
+
+// Backward compatibility export
+export const isFavorited = checkIsFavorited;

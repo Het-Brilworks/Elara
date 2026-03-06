@@ -91,7 +91,6 @@ export default function MeditationScreen() {
     }
 
     if (!user?.uid) {
-      console.log("User not logged in");
       return;
     }
 

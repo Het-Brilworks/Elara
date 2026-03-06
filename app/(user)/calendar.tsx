@@ -1,4 +1,12 @@
 import { COLORS } from "@/constants/colors";
+import { useAuthState } from "@/Firebase/hooks/useAuth";
+import {
+  useCreateEvent,
+  useDeleteEvent,
+  useEventsByDate,
+  useUserEvents,
+} from "@/Firebase/hooks/useCalendar";
+import { CalendarEvent } from "@/Firebase/services/CalendarService";
 import { useRouter } from "expo-router";
 import {
     ArrowLeft,
@@ -9,8 +17,9 @@ import {
     Plus,
     X,
 } from "lucide-react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
+    ActivityIndicator,
     Modal,
     Pressable,
     ScrollView,
@@ -22,47 +31,26 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-interface Event {
-  id: string;
-  date: string;
-  title: string;
-  time: string;
-  type: "appointment" | "milestone" | "reminder" | "personal";
-}
-
 export default function CalendarScreen() {
   const router = useRouter();
+  const { user } = useAuthState();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showAddEventModal, setShowAddEventModal] = useState(false);
-  const [events, setEvents] = useState<Event[]>([
-    {
-      id: "1",
-      date: "2026-03-05",
-      title: "Doctor Appointment",
-      time: "10:00 AM",
-      type: "appointment",
-    },
-    {
-      id: "2",
-      date: "2026-03-05",
-      title: "Week 12 Milestone",
-      time: "",
-      type: "milestone",
-    },
-    {
-      id: "3",
-      date: "2026-03-10",
-      title: "Prenatal Yoga Class",
-      time: "2:00 PM",
-      type: "personal",
-    },
-  ]);
   const [newEvent, setNewEvent] = useState({
     title: "",
     time: "",
-    type: "personal" as Event["type"],
+    type: "personal" as CalendarEvent["type"],
   });
+
+  // Fetch events
+  const { data: allEvents = [], isLoading: eventsLoading } = useUserEvents(
+    user?.uid,
+  );
+
+  // Mutations
+  const createEventMutation = useCreateEvent();
+  const deleteEventMutation = useDeleteEvent();
 
   const monthNames = [
     "January",
@@ -103,6 +91,13 @@ export default function CalendarScreen() {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
   };
 
+  // Calculate selected date string after formatDate is defined
+  const selectedDateString = formatDate(selectedDate);
+  const { data: selectedDateEvents = [] } = useEventsByDate(
+    user?.uid,
+    selectedDateString,
+  );
+
   const isSameDay = (date1: Date, date2: Date) => {
     return formatDate(date1) === formatDate(date2);
   };
@@ -135,12 +130,11 @@ export default function CalendarScreen() {
       day,
     );
     const dateString = formatDate(checkDate);
-    return events.some((event) => event.date === dateString);
+    return allEvents.some((event) => event.date === dateString);
   };
 
   const getEventsForSelectedDate = () => {
-    const dateString = formatDate(selectedDate);
-    return events.filter((event) => event.date === dateString);
+    return selectedDateEvents;
   };
 
   const goToPreviousMonth = () => {
@@ -166,23 +160,43 @@ export default function CalendarScreen() {
   };
 
   const handleAddEvent = () => {
-    if (!newEvent.title.trim()) return;
+    if (!newEvent.title || !user?.uid) return;
 
-    const event: Event = {
-      id: Date.now().toString(),
-      date: formatDate(selectedDate),
-      title: newEvent.title,
-      time: newEvent.time,
-      type: newEvent.type,
-    };
-
-    setEvents([...events, event]);
-    setNewEvent({ title: "", time: "", type: "personal" });
-    setShowAddEventModal(false);
+    createEventMutation.mutate(
+      {
+        userId: user.uid,
+        eventData: {
+          date: selectedDateString,
+          title: newEvent.title,
+          time: newEvent.time || "",
+          type: newEvent.type,
+        },
+      },
+      {
+        onSuccess: () => {
+          setNewEvent({ title: "", time: "", type: "personal" });
+          setShowAddEventModal(false);
+        },
+        onError: (error) => {
+          console.error("Failed to create event:", error);
+          // You can add user-facing error message here
+        },
+      },
+    );
   };
 
   const handleDeleteEvent = (eventId: string) => {
-    setEvents(events.filter((event) => event.id !== eventId));
+    if (!user?.uid) return;
+
+    deleteEventMutation.mutate(
+      { userId: user.uid, eventId },
+      {
+        onError: (error) => {
+          console.error("Failed to delete event:", error);
+          // You can add user-facing error message here
+        },
+      },
+    );
   };
 
   const getEventColor = (type: Event["type"]) => {
@@ -304,7 +318,12 @@ export default function CalendarScreen() {
             </Text>
           </View>
 
-          {todayEvents.length === 0 ? (
+          {eventsLoading ? (
+            <View style={styles.noEventsCard}>
+              <ActivityIndicator size="large" color={COLORS.PRIMARY} />
+              <Text style={styles.loadingText}>Loading events...</Text>
+            </View>
+          ) : todayEvents.length === 0 ? (
             <View style={styles.noEventsCard}>
               <Text style={styles.noEventsText}>No events scheduled</Text>
               <Text style={styles.noEventsSubtext}>
@@ -353,31 +372,6 @@ export default function CalendarScreen() {
               </View>
             ))
           )}
-        </View>
-
-        {/* Journey Milestones */}
-        <View style={styles.milestonesSection}>
-          <Text style={styles.sectionTitle}>Upcoming Milestones</Text>
-          <View style={styles.milestoneCard}>
-            <View style={styles.milestoneIcon}>
-              <CalendarIcon size={20} color={COLORS.PRIMARY} />
-            </View>
-            <View style={styles.milestoneContent}>
-              <Text style={styles.milestoneTitle}>Week 20 - Anatomy Scan</Text>
-              <Text style={styles.milestoneDate}>8 weeks remaining</Text>
-            </View>
-          </View>
-          <View style={styles.milestoneCard}>
-            <View style={styles.milestoneIcon}>
-              <CalendarIcon size={20} color={COLORS.PRIMARY} />
-            </View>
-            <View style={styles.milestoneContent}>
-              <Text style={styles.milestoneTitle}>
-                Week 28 - Third Trimester
-              </Text>
-              <Text style={styles.milestoneDate}>16 weeks remaining</Text>
-            </View>
-          </View>
         </View>
       </ScrollView>
 
@@ -471,12 +465,22 @@ export default function CalendarScreen() {
               style={({ pressed }) => [
                 styles.saveButton,
                 pressed && styles.saveButtonPressed,
-                !newEvent.title.trim() && styles.saveButtonDisabled,
+                (!newEvent.title.trim() || createEventMutation.isPending) &&
+                  styles.saveButtonDisabled,
               ]}
               onPress={handleAddEvent}
-              disabled={!newEvent.title.trim()}
+              disabled={!newEvent.title.trim() || createEventMutation.isPending}
             >
-              <Text style={styles.saveButtonText}>Add Event</Text>
+              {createEventMutation.isPending ? (
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <ActivityIndicator size="small" color="#FFF" />
+                  <Text style={[styles.saveButtonText, { marginLeft: 8 }]}>
+                    Adding...
+                  </Text>
+                </View>
+              ) : (
+                <Text style={styles.saveButtonText}>Add Event</Text>
+              )}
             </Pressable>
           </View>
         </View>
@@ -646,6 +650,11 @@ const styles = StyleSheet.create({
   noEventsSubtext: {
     fontSize: 14,
     color: "#999",
+  },
+  loadingText: {
+    fontSize: 14,
+    color: "#999",
+    marginTop: 12,
   },
   eventCard: {
     backgroundColor: "#FFF",
