@@ -1,5 +1,5 @@
-import messaging from "@react-native-firebase/messaging";
 import firestore from "@react-native-firebase/firestore";
+import messaging from "@react-native-firebase/messaging";
 
 /**
  * Request notification permissions

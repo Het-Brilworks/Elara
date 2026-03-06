@@ -1,11 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  CalendarEvent,
-  createEvent,
-  deleteEvent,
-  getEventsByDate,
-  getUserEvents,
-  updateEvent,
+    CalendarEvent,
+    createEvent,
+    deleteEvent,
+    getEventsByDate,
+    getUserEvents,
+    updateEvent,
 } from "../services/CalendarService";
 
 export const CALENDAR_QUERY_KEY = "calendar";

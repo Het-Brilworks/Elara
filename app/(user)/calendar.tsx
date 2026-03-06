@@ -1,10 +1,10 @@
 import { COLORS } from "@/constants/colors";
 import { useAuthState } from "@/Firebase/hooks/useAuth";
 import {
-  useCreateEvent,
-  useDeleteEvent,
-  useEventsByDate,
-  useUserEvents,
+    useCreateEvent,
+    useDeleteEvent,
+    useEventsByDate,
+    useUserEvents,
 } from "@/Firebase/hooks/useCalendar";
 import { CalendarEvent } from "@/Firebase/services/CalendarService";
 import { useRouter } from "expo-router";
@@ -17,7 +17,7 @@ import {
     Plus,
     X,
 } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
     ActivityIndicator,
     Modal,

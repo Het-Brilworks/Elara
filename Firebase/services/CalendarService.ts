@@ -34,11 +34,13 @@ export const createEvent = async (
 ): Promise<{ success: boolean; eventId?: string; error?: string }> => {
   try {
     // Create the event
-    const eventRef = await firestore().collection(EVENTS_COLLECTION).add({
-      userId,
-      ...eventData,
-      createdAt: firestore.FieldValue.serverTimestamp(),
-    });
+    const eventRef = await firestore()
+      .collection(EVENTS_COLLECTION)
+      .add({
+        userId,
+        ...eventData,
+        createdAt: firestore.FieldValue.serverTimestamp(),
+      });
 
     // Create notifications for the event
     await createEventNotifications(
@@ -104,7 +106,9 @@ const createEventNotifications = async (
 /**
  * Get all events for a user
  */
-export const getUserEvents = async (userId: string): Promise<CalendarEvent[]> => {
+export const getUserEvents = async (
+  userId: string,
+): Promise<CalendarEvent[]> => {
   try {
     const snapshot = await firestore()
       .collection(EVENTS_COLLECTION)
@@ -154,7 +158,10 @@ export const updateEvent = async (
   updates: Partial<Omit<CalendarEvent, "id" | "userId" | "createdAt">>,
 ): Promise<{ success: boolean; error?: string }> => {
   try {
-    await firestore().collection(EVENTS_COLLECTION).doc(eventId).update(updates);
+    await firestore()
+      .collection(EVENTS_COLLECTION)
+      .doc(eventId)
+      .update(updates);
 
     // If date changed, update notifications
     if (updates.date) {

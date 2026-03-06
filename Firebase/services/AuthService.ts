@@ -1,21 +1,18 @@
 import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  updateProfile,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signOut,
+    updateProfile,
 } from "@react-native-firebase/auth";
 import {
-  doc,
-  getDoc,
-  serverTimestamp,
-  setDoc,
-  updateDoc,
+    doc,
+    getDoc,
+    serverTimestamp,
+    setDoc,
+    updateDoc,
 } from "@react-native-firebase/firestore";
 import { auth, firestore } from "../firebase";
-import {
-  cleanupFCM,
-  initializeFCM,
-} from "./NotificationService";
+import { cleanupFCM, initializeFCM } from "./NotificationService";
 
 // Helper function to parse Firebase auth errors
 const parseAuthError = (error: any): string => {
