@@ -1,8 +1,8 @@
 import { COLORS } from "@/constants/colors";
 import { useRouter } from "expo-router";
 import {
+    ArrowLeft,
     ChevronDown,
-    ChevronLeft,
     Mail,
     MessageCircle,
     Phone,
@@ -244,7 +244,7 @@ export default function HelpSupportScreen() {
             pressed && styles.backButtonPressed,
           ]}
         >
-          <ChevronLeft size={24} color="#1A1A1A" strokeWidth={2} />
+          <ArrowLeft size={24} color={COLORS.PRIMARY} strokeWidth={2.5} />
         </Pressable>
         <Text style={styles.headerTitle}>Help & Support</Text>
         <View style={styles.headerSpacer} />
@@ -401,12 +401,19 @@ const styles = StyleSheet.create({
   backButton: {
     width: 40,
     height: 40,
+    borderRadius: 20,
+    backgroundColor: "#FFF",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
   },
   backButtonPressed: {
-    backgroundColor: "#F5F5F5",
+    opacity: 0.7,
+    transform: [{ scale: 0.95 }],
   },
   headerTitle: {
     fontSize: 18,

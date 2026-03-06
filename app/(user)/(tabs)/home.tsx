@@ -522,6 +522,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "600",
     color: theme.colors.light.primary_text,
+    marginBottom: theme.spacing.sm,
   },
   moodContainer: {
     flexDirection: "row",

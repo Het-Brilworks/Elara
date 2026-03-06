@@ -4,25 +4,26 @@ import { useAuthState, useLogout } from "@/Firebase/hooks/useAuth";
 import { useUserProfile } from "@/Firebase/hooks/useUser";
 import { useRouter } from "expo-router";
 import {
-  Bell,
-  ChevronRight,
-  HelpCircle,
-  LogOut,
-  Settings,
-  ShieldCheck,
-  User,
+    Bell,
+    Calendar,
+    ChevronRight,
+    HelpCircle,
+    LogOut,
+    Settings,
+    ShieldCheck,
+    User,
 } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
-  Image,
-  Pressable,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
+    ActivityIndicator,
+    Alert,
+    Image,
+    Pressable,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -67,6 +68,12 @@ export default function ProfileScreen() {
           onPress: () => router.push("/(user)/edit-profile"),
         },
         {
+          id: "calendar",
+          icon: Calendar,
+          label: "Calendar & Events",
+          onPress: () => router.push("/(user)/calendar"),
+        },
+        {
           id: "notifications",
           icon: Bell,
           label: "Notifications",
@@ -93,7 +100,7 @@ export default function ProfileScreen() {
           id: "about",
           icon: Settings,
           label: "About App",
-          onPress: () => console.log("About"),
+          onPress: () => router.push("/(user)/about-app"),
         },
       ],
     },

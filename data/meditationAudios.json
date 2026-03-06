@@ -1,0 +1,206 @@
+{
+  "meditations": [
+    {
+      "id": "1",
+      "title": "20 Minute Relaxation for Pregnancy",
+      "duration": 1200,
+      "durationText": "20 min",
+      "fileName": "Breathing+Space+Yoga+20+Min+Pregnancy+Relaxation.mp3",
+      "coverImage": "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80",
+      "category": "relaxation",
+      "type": "guided_relaxation",
+      "pregnancyStage": "prenatal",
+      "description": "A guided relaxation for anytime in your pregnancy - make yourself as comfortable as possible with cushions and blankets, dim the lights and enjoy. You may be seated or lying down as you wish.",
+      "benefits": [
+        "Deep relaxation",
+        "Stress relief",
+        "Better sleep",
+        "Connection with baby"
+      ],
+      "instructions": "Make yourself as comfortable as possible with cushions and blankets, dim the lights. You may be seated or lying down as you wish.",
+      "bestFor": ["any_trimester", "bedtime", "stress_relief"],
+      "difficulty": "beginner",
+      "thumbnailColor": "#E8B4F9"
+    },
+    {
+      "id": "2",
+      "title": "16 Minute Meditation for Pregnancy",
+      "duration": 960,
+      "durationText": "16 min",
+      "fileName": "Pregnancy+Meditation+Practice.mp3",
+      "coverImage": "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80",
+      "category": "meditation",
+      "type": "guided_meditation",
+      "pregnancyStage": "prenatal",
+      "description": "A guided meditation for anytime in your pregnancy - please sit in a stable upright chair and have your feet flat to the floor or on a cushion without shoes on. For the best possible experience make sure you are warm and that you are as undisturbed as possible.",
+      "benefits": [
+        "Mental clarity",
+        "Emotional balance",
+        "Mindful breathing",
+        "Present moment awareness"
+      ],
+      "instructions": "Sit in a stable upright chair with feet flat to the floor or on a cushion without shoes. Ensure you are warm and undisturbed.",
+      "bestFor": ["any_trimester", "morning", "midday"],
+      "difficulty": "beginner",
+      "thumbnailColor": "#B4D4F9"
+    },
+    {
+      "id": "3",
+      "title": "23 Minute Yoga Nidra Relaxation",
+      "duration": 1380,
+      "durationText": "23 min",
+      "fileName": "Pregnancy+Nidra+For+Rest+And+Release+Oct+20.mp3",
+      "coverImage": "https://images.unsplash.com/photo-1545389336-cf090694435e?w=800&q=80",
+      "category": "yoga_nidra",
+      "type": "guided_relaxation",
+      "pregnancyStage": "prenatal",
+      "description": "A guided relaxation for anytime in your pregnancy - make yourself as comfortable as possible with cushions and blankets, dim the lights and enjoy. You may be seated or lying down as you wish. This practice is really helpful to release the aches and pains of pregnancy and promote deep rest. It also can be used to help you drop off to sleep or in the middle of the night if you are trying to get back to sleep.",
+      "benefits": [
+        "Deep rest and rejuvenation",
+        "Release aches and pains",
+        "Promotes better sleep",
+        "Mental and physical restoration"
+      ],
+      "instructions": "Make yourself as comfortable as possible with cushions and blankets, dim the lights. You may be seated or lying down as you wish.",
+      "bestFor": ["any_trimester", "bedtime", "pain_relief", "night_waking"],
+      "difficulty": "beginner",
+      "thumbnailColor": "#F9D4B4"
+    },
+    {
+      "id": "4",
+      "title": "Golden Egg Breath",
+      "duration": 480,
+      "durationText": "8 min",
+      "fileName": "Breathing+Space+Yoga+8+minute+Golden+Egg+Breath.mp3",
+      "coverImage": "https://images.unsplash.com/photo-1515377905703-c4788e51af15?w=800&q=80",
+      "category": "breathing",
+      "type": "breathing_technique",
+      "pregnancyStage": "prenatal",
+      "description": "8 minute Golden Egg breath technique helps you to keep awareness on your breath whilst visualising yourself and your baby in a safe and protected space. Golden Egg is great to use when you wish to connect to your baby and really feel into the space you both inhabit. It can be particularly useful if you are feeling anxious or overwhelmed, or if you are in a particularly busy place and feel that you need some sanctuary.",
+      "benefits": [
+        "Connect with baby",
+        "Reduce anxiety",
+        "Create sense of safety",
+        "Emotional protection",
+        "Quick stress relief"
+      ],
+      "instructions": "Find a comfortable position. Focus on your breath while visualizing yourself and your baby in a warm, golden, protective egg.",
+      "bestFor": ["anxiety", "connection", "busy_places", "overwhelm"],
+      "difficulty": "beginner",
+      "thumbnailColor": "#FFD700"
+    },
+    {
+      "id": "5",
+      "title": "Birthing Breath Technique",
+      "duration": 600,
+      "durationText": "10 min",
+      "fileName": "Breathing+Space+Yoga+10+minute+Birthing+Breath+Technique.mp3",
+      "coverImage": "https://images.unsplash.com/photo-1493836512294-502baa1986e2?w=800&q=80",
+      "category": "breathing",
+      "type": "breathing_technique",
+      "pregnancyStage": "perinatal",
+      "description": "Birthing Breath is a good way to connect with, and tone your pelvic floor. It is also a really helpful practice which will support second stage labour when a connection to the release of the pelvic floor is really useful in helping your baby down and out.",
+      "benefits": [
+        "Pelvic floor connection",
+        "Prepare for labor",
+        "Support second stage",
+        "Muscle awareness",
+        "Birth preparation"
+      ],
+      "instructions": "Focus on connecting with your pelvic floor muscles, learning to engage and release them with your breath.",
+      "bestFor": ["third_trimester", "labor_prep", "pelvic_floor"],
+      "difficulty": "intermediate",
+      "thumbnailColor": "#F9B4E8"
+    },
+    {
+      "id": "6",
+      "title": "Golden Thread Breath & Relaxation",
+      "duration": 600,
+      "durationText": "10 min",
+      "fileName": "Breathing+Space+Yoga+10+Minute+Golden+Thread+Breath+And+Relaxation+For+Pregnancy.mp3",
+      "coverImage": "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=800&q=80",
+      "category": "breathing",
+      "type": "breathing_relaxation",
+      "pregnancyStage": "perinatal",
+      "description": "Golden thread breath technique soothes, balances and eases tensions, anxiety and pain. Great for first stage labour to breath along surges. Brilliant throughout pregnancy, birth and beyond. This practice eases you into relaxation. You can do this practice anywhere at anytime, great to do if you are feeling like you need some peace and calm in your day. Some ways that you can use it - whilst waiting for an appointment, whilst taking a 5 minute break in your day or before going to sleep.",
+      "benefits": [
+        "Soothes anxiety",
+        "Eases tension and pain",
+        "Great for early labor",
+        "Quick calm and peace",
+        "Portable practice"
+      ],
+      "instructions": "Can be done anywhere, anytime. Focus on breathing as if pulling a long, delicate golden thread through your body.",
+      "bestFor": [
+        "any_trimester",
+        "anxiety",
+        "pain_relief",
+        "labor",
+        "anytime"
+      ],
+      "difficulty": "beginner",
+      "thumbnailColor": "#B4F9D4"
+    }
+  ],
+  "categories": [
+    {
+      "id": "relaxation",
+      "name": "Relaxation",
+      "icon": "moon",
+      "color": "#E8B4F9"
+    },
+    {
+      "id": "meditation",
+      "name": "Meditation",
+      "icon": "brain",
+      "color": "#B4D4F9"
+    },
+    {
+      "id": "yoga_nidra",
+      "name": "Yoga Nidra",
+      "icon": "sparkles",
+      "color": "#F9D4B4"
+    },
+    {
+      "id": "breathing",
+      "name": "Breathing",
+      "icon": "wind",
+      "color": "#B4F9D4"
+    }
+  ],
+  "tags": [
+    "any_trimester",
+    "third_trimester",
+    "bedtime",
+    "morning",
+    "midday",
+    "anxiety",
+    "stress_relief",
+    "pain_relief",
+    "connection",
+    "labor_prep",
+    "pelvic_floor",
+    "night_waking",
+    "overwhelm",
+    "busy_places",
+    "labor",
+    "anytime"
+  ],
+  "pregnancyStages": [
+    {
+      "id": "prenatal",
+      "name": "Prenatal",
+      "description": "During pregnancy"
+    },
+    {
+      "id": "perinatal",
+      "name": "Perinatal",
+      "description": "Around birth (late pregnancy & labor)"
+    },
+    {
+      "id": "postnatal",
+      "name": "Postnatal",
+      "description": "After birth (postpartum)"
+    }
+  ]
+}

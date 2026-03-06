@@ -3,7 +3,7 @@ import SmallYogaCard from "@/components/SmallYogaCard";
 import YogaSessionCard from "@/components/YogaSessionCard";
 import { theme } from "@/constants/theme";
 import { useRouter } from "expo-router";
-import { Infinity, Leaf, MessageCircle, Search } from "lucide-react-native";
+import { Infinity, Leaf, Search } from "lucide-react-native";
 import React, { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -208,10 +208,10 @@ export default function YogaScreen() {
       </ScrollView>
 
       {/* Floating Action Button */}
-      <Pressable style={styles.fab}>
+      {/* <Pressable style={styles.fab}>
         <MessageCircle size={24} color="#FFF" strokeWidth={2} />
         <Text style={styles.fabText}>Ask Expert</Text>
-      </Pressable>
+      </Pressable> */}
     </SafeAreaView>
   );
 }

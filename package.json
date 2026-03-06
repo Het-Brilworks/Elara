@@ -11,6 +11,7 @@
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" && prettier -c \"**/*.{js,jsx,ts,tsx,json}\"",
     "format": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix && prettier \"**/*.{js,jsx,ts,tsx,json}\" --write",
     "web": "expo start --web",
+    "upload:meditations": "node scripts/uploadMeditations.js",
     "build:android:develop": "npx eas build --platform android --profile develop --non-interactive",
     "build:ios:develop": "npx eas build --platform ios --profile develop --non-interactive",
     "build:ios:production:local": "npx eas build --platform ios --profile production --local",
@@ -65,6 +66,7 @@
     "@types/react": "~19.1.0",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
+    "firebase-admin": "^13.7.0",
     "patch-package": "^8.0.1",
     "typescript": "~5.9.2"
   },

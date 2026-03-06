@@ -5,22 +5,22 @@ import { useSoftDeleteAccount } from "@/Firebase/hooks/useUser";
 import auth from "@react-native-firebase/auth";
 import { useRouter } from "expo-router";
 import {
-    ChevronLeft,
-    ChevronRight,
-    FileText,
-    ShieldCheck,
-    Trash2,
-    UserX,
+  ArrowLeft,
+  ChevronRight,
+  FileText,
+  ShieldCheck,
+  Trash2,
+  UserX,
 } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-    Alert,
-    Pressable,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    View,
+  Alert,
+  Pressable,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -235,7 +235,7 @@ export default function PrivacySecurityScreen() {
             pressed && styles.backButtonPressed,
           ]}
         >
-          <ChevronLeft size={24} color="#1A1A1A" strokeWidth={2} />
+          <ArrowLeft size={24} color={COLORS.PRIMARY} strokeWidth={2.5} />
         </Pressable>
         <Text style={styles.headerTitle}>Privacy & Security</Text>
         <View style={styles.headerSpacer} />
@@ -343,7 +343,7 @@ export default function PrivacySecurityScreen() {
         visible={showDeleteAccountModal}
         title="Delete Account"
         message="This action cannot be undone. All your data, including journal entries, tracking history, and saved content will be permanently deleted."
-        confirmText="Delete Permanently"
+        confirmText="Delete"
         cancelText="Cancel"
         confirmDestructive
         isLoading={softDeleteMutation.isPending}
@@ -372,12 +372,19 @@ const styles = StyleSheet.create({
   backButton: {
     width: 40,
     height: 40,
+    borderRadius: 20,
+    backgroundColor: "#FFF",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
   },
   backButtonPressed: {
-    backgroundColor: "#F5F5F5",
+    opacity: 0.7,
+    transform: [{ scale: 0.95 }],
   },
   headerTitle: {
     fontSize: 18,
