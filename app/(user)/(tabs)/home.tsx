@@ -2,24 +2,24 @@ import { COLORS } from "@/constants/colors";
 import { theme } from "@/constants/theme";
 import { useAuthState } from "@/Firebase/hooks/useAuth";
 import {
-  useLastNDaysJournal,
-  useSaveMoodEntry,
-  useStreakStats,
-  useTodayJournal,
-  useUpdateJournalInfo,
+    useLastNDaysJournal,
+    useSaveMoodEntry,
+    useStreakStats,
+    useTodayJournal,
+    useUpdateJournalInfo,
 } from "@/Firebase/hooks/useJournal";
 import { useUserProfile } from "@/Firebase/hooks/useUser";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
-  Image,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
+    ActivityIndicator,
+    Alert,
+    Image,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -326,7 +326,6 @@ export default function HomeScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Weekly Streak</Text>
-            <Text style={styles.previousBest}>Previous Best</Text>
           </View>
           <View style={styles.streakCard}>
             <View style={styles.streakHeader}>
@@ -334,7 +333,8 @@ export default function HomeScreen() {
                 <Text style={styles.streakNumber}>{currentStreak}</Text>
                 <Text style={styles.streakDays}>day streak</Text>
               </View>
-              <View>
+              <View style={styles.previousBestContainer}>
+                <Text style={styles.previousBest}>Previous Best</Text>
                 <Text style={styles.previousBestValue}>
                   {previousBest} Days
                 </Text>
@@ -606,6 +606,11 @@ const styles = StyleSheet.create({
   previousBest: {
     fontSize: 13,
     color: theme.colors.light.secondary_text,
+    textAlign: "right",
+  },
+  previousBestContainer: {
+    flexDirection: "column",
+    alignItems: "flex-end",
   },
   streakCard: {
     backgroundColor: theme.colors.light.surface_variant,

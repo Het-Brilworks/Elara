@@ -1,11 +1,11 @@
 import { theme } from "@/constants/theme";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
-  ArrowLeft,
-  CheckCircle2,
-  Clock,
-  Play,
-  Star,
+    ArrowLeft,
+    CheckCircle2,
+    Clock,
+    Play,
+    Star,
 } from "lucide-react-native";
 import React, { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -21,6 +21,25 @@ export default function YogaSessionScreen() {
   const type = (params.type as string) || "Gentle";
   const stage = (params.stage as string) || "First Trimester";
   const youtubeUrl = (params.youtubeUrl as string) || "";
+  const description =
+    (params.description as string) ||
+    `Safe, gentle stretches perfect for the ${stage.toLowerCase()}. Helps with morning sickness and fatigue while maintaining flexibility and connection with your body.`;
+  const instructor = (params.instructor as string) || "Yoga Instructor";
+
+  // Parse benefits from params or use default
+  let benefits: string[] = [];
+  try {
+    benefits = params.benefits
+      ? JSON.parse(params.benefits as string)
+      : ["Eases nausea", "Boosts energy", "Gentle movement", "Reduces stress"];
+  } catch (error) {
+    benefits = [
+      "Eases nausea",
+      "Boosts energy",
+      "Gentle movement",
+      "Reduces stress",
+    ];
+  }
 
   // Extract YouTube video ID from URL
   const getYoutubeVideoId = (url: string): string => {
@@ -42,13 +61,6 @@ export default function YogaSessionScreen() {
 
   const videoId = getYoutubeVideoId(youtubeUrl);
   const [playing, setPlaying] = useState(false);
-
-  const benefits = [
-    "Eases nausea",
-    "Boosts energy",
-    "Gentle movement",
-    "Reduces stress",
-  ];
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
@@ -99,11 +111,7 @@ export default function YogaSessionScreen() {
             </View>
           </View>
 
-          <Text style={styles.description}>
-            Safe, gentle stretches perfect for the {stage.toLowerCase()}. Helps
-            with morning sickness and fatigue while maintaining flexibility and
-            connection with your body.
-          </Text>
+          <Text style={styles.description}>{description}</Text>
 
           {/* Benefits */}
           <View style={styles.benefitsSection}>

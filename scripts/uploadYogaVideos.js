@@ -109,7 +109,7 @@ async function uploadYogaVideosData() {
 
       // Upload to Firestore
       await db
-        .collection("yogaVideos")
+        .collection("yoga")
         .doc(video.id)
         .set(yogaVideoDoc, { merge: true });
 
