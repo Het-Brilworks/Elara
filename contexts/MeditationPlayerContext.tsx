@@ -1,15 +1,15 @@
 import {
-  setAudioModeAsync,
-  useAudioPlayer,
-  useAudioPlayerStatus,
+    setAudioModeAsync,
+    useAudioPlayer,
+    useAudioPlayerStatus,
 } from "expo-audio";
 import React, {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
+    createContext,
+    ReactNode,
+    useContext,
+    useEffect,
+    useRef,
+    useState,
 } from "react";
 
 interface MeditationTrack {
