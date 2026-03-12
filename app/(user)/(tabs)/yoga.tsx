@@ -2,26 +2,35 @@ import FilterChip from "@/components/FilterChip";
 import SmallYogaCard from "@/components/SmallYogaCard";
 import YogaSessionCard from "@/components/YogaSessionCard";
 import { theme } from "@/constants/theme";
+import { useAuthState } from "@/Firebase/hooks/useAuth";
+import { useYogaFavorites } from "@/Firebase/hooks/useFavorites";
 import {
-  useAllYogaVideos,
-  useYogaVideosByTrimester,
+    useAllYogaVideos,
+    useSearchYogaVideos,
+    useYogaVideosByTrimester,
 } from "@/Firebase/hooks/useYogas";
+import { getDailyYogaPick } from "@/utils/dailyRecommendations";
 import { useRouter } from "expo-router";
-import { Infinity, Leaf, Search } from "lucide-react-native";
+import { Heart, Infinity, Leaf, Search, X } from "lucide-react-native";
 import React, { useMemo, useState } from "react";
 import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+    ActivityIndicator,
+    Modal,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function YogaScreen() {
   const router = useRouter();
+  const { user } = useAuthState();
   const [selectedFilter, setSelectedFilter] = useState("all");
+  const [searchModalVisible, setSearchModalVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Fetch yoga videos based on filter
   const { data: allVideos, isLoading: isLoadingAll } = useAllYogaVideos();
@@ -31,6 +40,9 @@ export default function YogaScreen() {
     useYogaVideosByTrimester("second");
   const { data: thirdTrimesterVideos, isLoading: isLoadingT3 } =
     useYogaVideosByTrimester("third");
+  const { data: favoriteIds = [] } = useYogaFavorites(user?.uid);
+  const { data: searchResults, isLoading: isSearching } =
+    useSearchYogaVideos(searchQuery);
 
   // Get filtered videos based on selected filter
   const displayedVideos = useMemo(() => {
@@ -41,6 +53,11 @@ export default function YogaScreen() {
         return secondTrimesterVideos || [];
       case "t3":
         return thirdTrimesterVideos || [];
+      case "favorites":
+        // Filter all videos to only show favorites
+        return (allVideos || []).filter((video) =>
+          favoriteIds.includes(video.id),
+        );
       default:
         return allVideos || [];
     }
@@ -50,15 +67,30 @@ export default function YogaScreen() {
     firstTrimesterVideos,
     secondTrimesterVideos,
     thirdTrimesterVideos,
+    favoriteIds,
   ]);
 
   const isLoading = isLoadingAll || isLoadingT1 || isLoadingT2 || isLoadingT3;
 
-  // Get recommended videos (first 2)
-  const recommendedVideos = useMemo(
-    () => displayedVideos.slice(0, 2),
-    [displayedVideos],
-  );
+  // Get today's daily pick yoga video
+  const dailyPickVideo = useMemo(() => {
+    if (allVideos && allVideos.length > 0) {
+      return getDailyYogaPick(allVideos);
+    }
+    return null;
+  }, [allVideos]);
+
+  // Get recommended videos - includes daily pick first, then next video from displayed
+  const recommendedVideos = useMemo(() => {
+    if (dailyPickVideo) {
+      // Include daily pick and one more video
+      const otherVideos = displayedVideos
+        .filter((v) => v.id !== dailyPickVideo.id)
+        .slice(0, 1);
+      return [dailyPickVideo, ...otherVideos];
+    }
+    return displayedVideos.slice(0, 2);
+  }, [dailyPickVideo, displayedVideos]);
 
   // Get second trimester videos for special section
   const secondTrimesterSpecial = useMemo(
@@ -70,7 +102,7 @@ export default function YogaScreen() {
   const moreVideos = useMemo(() => displayedVideos.slice(2), [displayedVideos]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
       <View style={styles.headerBlobLeft} />
       <View style={styles.headerBlobRight} />
       {/* Header */}
@@ -79,7 +111,10 @@ export default function YogaScreen() {
           <Text style={styles.title}>Yoga Library</Text>
           <Text style={styles.subtitle}>Find your flow for today</Text>
         </View>
-        <Pressable style={styles.searchButton}>
+        <Pressable
+          style={styles.searchButton}
+          onPress={() => setSearchModalVisible(true)}
+        >
           <Search size={24} color="#1A1A1A" strokeWidth={2} />
         </Pressable>
       </View>
@@ -95,6 +130,12 @@ export default function YogaScreen() {
           style={styles.filterContainer}
           contentContainerStyle={styles.filterContent}
         >
+          <FilterChip
+            label="Favorites"
+            icon={Heart}
+            selected={selectedFilter === "favorites"}
+            onPress={() => setSelectedFilter("favorites")}
+          />
           <FilterChip
             label="All Stages"
             icon={Infinity}
@@ -129,16 +170,13 @@ export default function YogaScreen() {
           </View>
         )}
 
-        {/* Recommended for You */}
-        {!isLoading && recommendedVideos.length > 0 && (
+        {/* Favorites View - Only show favorite videos */}
+        {!isLoading && selectedFilter === "favorites" && (
           <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Recommended for You</Text>
-              <Text style={styles.seeAll}>See All</Text>
-            </View>
-            {recommendedVideos.map((video) => (
+            {displayedVideos.map((video) => (
               <YogaSessionCard
                 key={video.id}
+                videoId={video.id}
                 title={video.title}
                 instructor={`with ${video.instructor}`}
                 level={video.level}
@@ -149,6 +187,7 @@ export default function YogaScreen() {
                   router.push({
                     pathname: "/(user)/yoga-session",
                     params: {
+                      videoId: video.id,
                       title: video.title,
                       duration: video.durationText,
                       type: video.type,
@@ -165,39 +204,42 @@ export default function YogaScreen() {
           </View>
         )}
 
-        {/* Second Trimester Focus */}
-        {!isLoading && secondTrimesterSpecial.length > 0 && (
-          <View style={styles.section}>
-            <View style={styles.specialSection}>
-              <View style={styles.specialHeader}>
-                <View style={styles.specialIconContainer}>
-                  <Leaf size={20} color="#FFF" strokeWidth={2} />
+        {/* Normal View - Show all sections */}
+        {!isLoading && selectedFilter !== "favorites" && (
+          <>
+            {/* Recommended for You */}
+            {recommendedVideos.length > 0 && (
+              <View style={styles.section}>
+                <View style={styles.sectionHeader}>
+                  <Text style={styles.sectionTitle}>Recommended for You</Text>
+                  <Pressable
+                    onPress={() =>
+                      router.push("/(user)/yoga-all?section=recommended")
+                    }
+                  >
+                    <Text style={styles.seeAll}>See All</Text>
+                  </Pressable>
                 </View>
-                <View>
-                  <Text style={styles.specialTitle}>
-                    Second Trimester Focus
-                  </Text>
-                  <Text style={styles.specialSubtitle}>
-                    Safe movements for weeks 14-27
-                  </Text>
-                </View>
-              </View>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                style={styles.horizontalScroll}
-              >
-                {secondTrimesterSpecial.map((video) => (
-                  <SmallYogaCard
+                {recommendedVideos.map((video, index) => (
+                  <YogaSessionCard
                     key={video.id}
+                    videoId={video.id}
                     title={video.title}
-                    duration={video.durationText}
+                    instructor={`with ${video.instructor}`}
+                    level={video.level}
                     type={video.type}
+                    duration={video.durationText}
                     imageUrl={video.thumbnailUrl}
+                    badge={
+                      index === 0 && dailyPickVideo?.id === video.id
+                        ? "Daily Pick"
+                        : undefined
+                    }
                     onPress={() =>
                       router.push({
                         pathname: "/(user)/yoga-session",
                         params: {
+                          videoId: video.id,
                           title: video.title,
                           duration: video.durationText,
                           type: video.type,
@@ -211,50 +253,130 @@ export default function YogaScreen() {
                     }
                   />
                 ))}
-              </ScrollView>
-            </View>
-          </View>
-        )}
+              </View>
+            )}
 
-        {/* More Sessions */}
-        {!isLoading && moreVideos.length > 0 && (
-          <View style={styles.section}>
-            {moreVideos.map((video) => (
-              <YogaSessionCard
-                key={video.id}
-                title={video.title}
-                instructor={`with ${video.instructor}`}
-                level={video.level}
-                type={video.type}
-                duration={video.durationText}
-                imageUrl={video.thumbnailUrl}
-                onPress={() =>
-                  router.push({
-                    pathname: "/(user)/yoga-session",
-                    params: {
-                      title: video.title,
-                      duration: video.durationText,
-                      type: video.type,
-                      stage: video.pregnancyStage,
-                      youtubeUrl: video.youtubeUrl,
-                      description: video.description,
-                      instructor: video.instructor,
-                      benefits: JSON.stringify(video.benefits),
-                    },
-                  })
-                }
-              />
-            ))}
-          </View>
+            {/* Second Trimester Focus */}
+            {secondTrimesterSpecial.length > 0 && (
+              <View style={styles.section}>
+                <View style={styles.specialSection}>
+                  <View style={styles.specialHeader}>
+                    <View style={styles.specialIconContainer}>
+                      <Leaf size={20} color="#FFF" strokeWidth={2} />
+                    </View>
+                    <View>
+                      <Text style={styles.specialTitle}>
+                        Second Trimester Focus
+                      </Text>
+                      <Text style={styles.specialSubtitle}>
+                        Safe movements for weeks 14-27
+                      </Text>
+                    </View>
+                  </View>
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    style={styles.horizontalScroll}
+                  >
+                    {secondTrimesterSpecial.map((video) => (
+                      <SmallYogaCard
+                        key={video.id}
+                        title={video.title}
+                        duration={video.durationText}
+                        type={video.type}
+                        imageUrl={video.thumbnailUrl}
+                        onPress={() =>
+                          router.push({
+                            pathname: "/(user)/yoga-session",
+                            params: {
+                              videoId: video.id,
+                              title: video.title,
+                              duration: video.durationText,
+                              type: video.type,
+                              stage: video.pregnancyStage,
+                              youtubeUrl: video.youtubeUrl,
+                              description: video.description,
+                              instructor: video.instructor,
+                              benefits: JSON.stringify(video.benefits),
+                            },
+                          })
+                        }
+                      />
+                    ))}
+                  </ScrollView>
+                </View>
+              </View>
+            )}
+
+            {/* More Sessions */}
+            {moreVideos.length > 0 && (
+              <View style={styles.section}>
+                {moreVideos.map((video) => (
+                  <YogaSessionCard
+                    key={video.id}
+                    videoId={video.id}
+                    title={video.title}
+                    instructor={`with ${video.instructor}`}
+                    level={video.level}
+                    type={video.type}
+                    duration={video.durationText}
+                    imageUrl={video.thumbnailUrl}
+                    onPress={() =>
+                      router.push({
+                        pathname: "/(user)/yoga-session",
+                        params: {
+                          videoId: video.id,
+                          title: video.title,
+                          duration: video.durationText,
+                          type: video.type,
+                          stage: video.pregnancyStage,
+                          youtubeUrl: video.youtubeUrl,
+                          description: video.description,
+                          instructor: video.instructor,
+                          benefits: JSON.stringify(video.benefits),
+                        },
+                      })
+                    }
+                  />
+                ))}
+              </View>
+            )}
+          </>
         )}
 
         {/* Empty State */}
         {!isLoading && displayedVideos.length === 0 && (
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>No yoga sessions found</Text>
-            <Text style={styles.emptySubtext}>
-              Try selecting a different filter
-            </Text>
+            {selectedFilter === "favorites" ? (
+              <>
+                <View style={styles.emptyIconContainer}>
+                  <Heart
+                    size={64}
+                    color={theme.colors.light.accent_pink_dark}
+                    strokeWidth={1.5}
+                  />
+                  <View style={styles.sparkleTop}>
+                    <Text style={styles.sparkleEmoji}>✨</Text>
+                  </View>
+                  <View style={styles.sparkleBottom}>
+                    <Text style={styles.sparkleEmoji}>💕</Text>
+                  </View>
+                </View>
+                <Text style={styles.emptyText}>No favorite videos yet</Text>
+                <Text style={styles.emptySubtext}>
+                  Start adding sessions to your favorites by tapping the heart
+                  icon
+                </Text>
+              </>
+            ) : (
+              <>
+                <Text style={styles.emptyEmoji}>🧘‍♀️</Text>
+                <Text style={styles.emptyText}>No yoga sessions found</Text>
+                <Text style={styles.emptySubtext}>
+                  Try selecting a different filter
+                </Text>
+              </>
+            )}
           </View>
         )}
 
@@ -267,6 +389,123 @@ export default function YogaScreen() {
         <MessageCircle size={24} color="#FFF" strokeWidth={2} />
         <Text style={styles.fabText}>Ask Expert</Text>
       </Pressable> */}
+
+      {/* Search Modal */}
+      <Modal
+        visible={searchModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setSearchModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            {/* Search Header */}
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Search Yoga Sessions</Text>
+              <Pressable
+                onPress={() => {
+                  setSearchModalVisible(false);
+                  setSearchQuery("");
+                }}
+                style={styles.closeButton}
+              >
+                <X size={24} color="#1A1A1A" />
+              </Pressable>
+            </View>
+
+            {/* Search Input */}
+            <View style={styles.searchInputContainer}>
+              <Search size={20} color="#666" />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Search by title, instructor, or type..."
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                autoFocus
+              />
+              {searchQuery.length > 0 && (
+                <Pressable onPress={() => setSearchQuery("")}>
+                  <X size={20} color="#666" />
+                </Pressable>
+              )}
+            </View>
+
+            {/* Search Results */}
+            <ScrollView style={styles.searchResults}>
+              {isSearching && (
+                <View style={styles.searchLoadingContainer}>
+                  <ActivityIndicator
+                    size="large"
+                    color={theme.colors.light.primary}
+                  />
+                  <Text style={styles.loadingText}>Searching...</Text>
+                </View>
+              )}
+
+              {!isSearching && searchQuery.length > 0 && searchResults && (
+                <>
+                  <Text style={styles.resultCount}>
+                    {searchResults.length} result
+                    {searchResults.length !== 1 ? "s" : ""} found
+                  </Text>
+                  {searchResults.map((video) => (
+                    <YogaSessionCard
+                      key={video.id}
+                      videoId={video.id}
+                      title={video.title}
+                      instructor={`with ${video.instructor}`}
+                      level={video.level}
+                      type={video.type}
+                      duration={video.durationText}
+                      imageUrl={video.thumbnailUrl}
+                      onPress={() => {
+                        setSearchModalVisible(false);
+                        setSearchQuery("");
+                        router.push({
+                          pathname: "/(user)/yoga-session",
+                          params: {
+                            videoId: video.id,
+                            title: video.title,
+                            duration: video.durationText,
+                            type: video.type,
+                            stage: video.pregnancyStage,
+                            youtubeUrl: video.youtubeUrl,
+                            description: video.description,
+                            instructor: video.instructor,
+                            benefits: JSON.stringify(video.benefits),
+                          },
+                        });
+                      }}
+                    />
+                  ))}
+                  {searchResults.length === 0 && (
+                    <View style={styles.emptySearchContainer}>
+                      <Text style={styles.emptySearchText}>
+                        No results found
+                      </Text>
+                      <Text style={styles.emptySearchSubtext}>
+                        Try different keywords
+                      </Text>
+                    </View>
+                  )}
+                </>
+              )}
+
+              {searchQuery.length === 0 && (
+                <View style={styles.searchEmptyState}>
+                  <Search size={48} color="#E0E0E0" />
+                  <Text style={styles.searchEmptyText}>
+                    Search for yoga sessions
+                  </Text>
+                  <Text style={styles.searchEmptySubtext}>
+                    Try searching by title, instructor, or type
+                  </Text>
+                </View>
+              )}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -425,6 +664,27 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing.xl * 2,
     paddingHorizontal: theme.spacing.lg,
   },
+  emptyIconContainer: {
+    position: "relative",
+    marginBottom: theme.spacing.xl,
+  },
+  sparkleTop: {
+    position: "absolute",
+    top: -10,
+    right: -15,
+  },
+  sparkleBottom: {
+    position: "absolute",
+    bottom: -5,
+    left: -20,
+  },
+  sparkleEmoji: {
+    fontSize: 28,
+  },
+  emptyEmoji: {
+    fontSize: 64,
+    marginBottom: theme.spacing.lg,
+  },
   emptyText: {
     fontSize: theme.textStyles.title_medium.fontSize,
     fontWeight: "600",
@@ -432,6 +692,103 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.sm,
   },
   emptySubtext: {
+    fontSize: theme.textStyles.body_medium.fontSize,
+    color: "#666",
+    textAlign: "center",
+  },
+  // Search Modal Styles
+  modalContainer: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
+  },
+  modalContent: {
+    backgroundColor: "#FFF",
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    height: "90%",
+    paddingTop: theme.spacing.lg,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: theme.spacing.lg,
+    marginBottom: theme.spacing.md,
+  },
+  modalTitle: {
+    fontSize: theme.textStyles.title_large.fontSize,
+    fontWeight: "700",
+    color: "#1A1A1A",
+  },
+  closeButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#F5F5F5",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  searchInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F5F5F5",
+    borderRadius: 12,
+    paddingHorizontal: theme.spacing.md,
+    marginHorizontal: theme.spacing.lg,
+    marginBottom: theme.spacing.lg,
+    gap: theme.spacing.sm,
+  },
+  searchInput: {
+    flex: 1,
+    paddingVertical: theme.spacing.md,
+    fontSize: theme.textStyles.body_medium.fontSize,
+    color: "#1A1A1A",
+  },
+  searchResults: {
+    flex: 1,
+    paddingHorizontal: theme.spacing.lg,
+  },
+  searchLoadingContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: theme.spacing.xl * 2,
+  },
+  resultCount: {
+    fontSize: theme.textStyles.body_medium.fontSize,
+    fontWeight: "600",
+    color: "#666",
+    marginBottom: theme.spacing.md,
+  },
+  emptySearchContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: theme.spacing.xl * 2,
+  },
+  emptySearchText: {
+    fontSize: theme.textStyles.title_medium.fontSize,
+    fontWeight: "600",
+    color: "#1A1A1A",
+    marginBottom: theme.spacing.sm,
+  },
+  emptySearchSubtext: {
+    fontSize: theme.textStyles.body_medium.fontSize,
+    color: "#666",
+    textAlign: "center",
+  },
+  searchEmptyState: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: theme.spacing.xl * 3,
+  },
+  searchEmptyText: {
+    fontSize: theme.textStyles.title_medium.fontSize,
+    fontWeight: "600",
+    color: "#1A1A1A",
+    marginTop: theme.spacing.lg,
+    marginBottom: theme.spacing.sm,
+  },
+  searchEmptySubtext: {
     fontSize: theme.textStyles.body_medium.fontSize,
     color: "#666",
     textAlign: "center",

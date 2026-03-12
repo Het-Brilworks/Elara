@@ -1,15 +1,15 @@
 import {
-    setAudioModeAsync,
-    useAudioPlayer,
-    useAudioPlayerStatus,
+  setAudioModeAsync,
+  useAudioPlayer,
+  useAudioPlayerStatus,
 } from "expo-audio";
 import React, {
-    createContext,
-    ReactNode,
-    useContext,
-    useEffect,
-    useRef,
-    useState,
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
 } from "react";
 
 interface MeditationTrack {
@@ -74,6 +74,7 @@ export const MeditationPlayerProvider: React.FC<
         await setAudioModeAsync({
           playsInSilentMode: true,
           shouldPlayInBackground: true,
+          staysActiveInBackground: true,
         });
         console.log("Audio mode configured for background playback");
       } catch (error) {
@@ -88,6 +89,7 @@ export const MeditationPlayerProvider: React.FC<
     playerRef.current = player;
     return () => {
       try {
+        player.clearLockScreenControls();
         player.remove();
       } catch (error) {
         console.error("Error removing player:", error);
@@ -100,6 +102,21 @@ export const MeditationPlayerProvider: React.FC<
       player.volume = volume;
     }
   }, [volume]);
+
+  // Update lock screen metadata when track or playback state changes
+  useEffect(() => {
+    if (currentTrack && status.isLoaded) {
+      try {
+        player.updateLockScreenMetadata({
+          title: currentTrack.title,
+          artist: "Elara Meditation",
+          artworkUrl: currentTrack.coverImage,
+        });
+      } catch (error) {
+        console.log("Lock screen metadata update (non-critical):", error);
+      }
+    }
+  }, [currentTrack, status.playing, status.currentTime]);
 
   const play = async (track: MeditationTrack) => {
     try {
@@ -118,12 +135,17 @@ export const MeditationPlayerProvider: React.FC<
       setCurrentTrack(track);
 
       // Replace the source and play
-      try {
-        await player.replace(track.audioUrl);
-        await player.play();
-      } catch (error) {
-        console.error("Error playing track:", error);
-      }
+      await player.replace(track.audioUrl);
+      await player.play();
+
+      // Set up lock screen controls with metadata
+      player.setActiveForLockScreen(true, {
+        title: track.title,
+        artist: "Elara Meditation",
+        artworkUrl: track.coverImage,
+      });
+
+      console.log("Track playing with lock screen controls");
     } catch (error) {
       console.error("Error in play function:", error);
     }
@@ -149,6 +171,7 @@ export const MeditationPlayerProvider: React.FC<
     try {
       player.pause();
       player.seekTo(0);
+      player.clearLockScreenControls();
       setCurrentTrack(null);
     } catch (error) {
       console.error("Error stopping:", error);

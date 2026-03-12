@@ -22,6 +22,7 @@ import {
     ScrollView,
     StatusBar,
     StyleSheet,
+    Switch,
     Text,
     View,
 } from "react-native";
@@ -35,6 +36,13 @@ export default function ProfileScreen() {
   );
   const logoutMutation = useLogout();
   const [showSignOutModal, setShowSignOutModal] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+
+  const handleToggleNotifications = () => {
+    setNotificationsEnabled(!notificationsEnabled);
+    // You can add actual notification enabling/disabling logic here
+    // For example: update Firebase user preferences, configure push notifications, etc.
+  };
 
   const handleSignOut = async () => {
     try {
@@ -77,7 +85,8 @@ export default function ProfileScreen() {
           id: "notifications",
           icon: Bell,
           label: "Notifications",
-          onPress: () => console.log("Notifications"),
+          onPress: () => handleToggleNotifications(),
+          hasToggle: true,
         },
         {
           id: "privacy",
@@ -115,7 +124,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
       <StatusBar barStyle="dark-content" />
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -190,7 +199,22 @@ export default function ProfileScreen() {
                     />
                   </View>
                   <Text style={styles.menuLabel}>{item.label}</Text>
-                  <ChevronRight size={20} color="#999" />
+                  {item.hasToggle ? (
+                    <Switch
+                      value={notificationsEnabled}
+                      onValueChange={handleToggleNotifications}
+                      trackColor={{
+                        false: "#E0E0E0",
+                        true: COLORS.PRIMARY_LIGHT,
+                      }}
+                      thumbColor={
+                        notificationsEnabled ? COLORS.PRIMARY : "#F4F4F4"
+                      }
+                      ios_backgroundColor="#E0E0E0"
+                    />
+                  ) : (
+                    <ChevronRight size={20} color="#999" />
+                  )}
                 </Pressable>
               ))}
             </View>

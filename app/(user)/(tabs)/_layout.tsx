@@ -5,10 +5,12 @@ import { useUserProfile } from "@/Firebase/hooks/useUser";
 import { Tabs } from "expo-router";
 import { Baby, Dumbbell, Heart, Home, User } from "lucide-react-native";
 import { Platform, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function TabLayout() {
   const { user } = useAuthState();
   const { data: userProfile } = useUserProfile(user?.uid);
+  const insets = useSafeAreaInsets();
 
   const isPrenatal = userProfile?.selectedJourney === "prenatal";
 
@@ -21,8 +23,9 @@ export default function TabLayout() {
             backgroundColor: theme.colors.light.background,
             borderTopColor: theme.colors.light.divider,
             borderTopWidth: 1,
-            height: Platform.OS === "ios" ? 88 : 68,
-            paddingBottom: Platform.OS === "ios" ? 28 : 12,
+            height: Platform.OS === "ios" ? 88 : 68 + insets.bottom,
+            paddingBottom:
+              Platform.OS === "ios" ? 28 : Math.max(insets.bottom, 8),
             paddingTop: 8,
             elevation: 0,
             shadowOpacity: 0,

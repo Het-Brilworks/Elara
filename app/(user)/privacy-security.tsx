@@ -123,8 +123,8 @@ export default function PrivacySecurityScreen() {
       title: "Contact Us",
       content: [
         `If you have questions about this Privacy Policy or our data practices, please contact us:`,
-        `Email: privacy@elara-app.com`,
-        `Address: Elara Privacy Team, 123 Wellness Street, San Francisco, CA 94102`,
+        `Email: digital@brilworks.com`,
+        `Address: 503, Fortune Business Hub, Nr. Satyamev Elysiym, Sola, Ahmedabad, Gujarat 380060 India`,
         `We typically respond to privacy inquiries within 48 hours.`,
       ],
     },

@@ -75,12 +75,12 @@ export const InputField: React.FC<InputFieldProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: theme.spacing.md,
+    marginBottom: theme.spacing.sm,
   },
   label: {
     ...theme.textStyles.body_medium,
     color: theme.colors.light.primary_text,
-    marginBottom: theme.spacing.sm,
+    marginBottom: theme.spacing.xs,
     fontWeight: "600",
   },
   inputContainer: {

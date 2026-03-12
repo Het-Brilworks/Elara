@@ -1,5 +1,10 @@
 import { COLORS } from "@/constants/colors";
 import { theme } from "@/constants/theme";
+import { useAuthState } from "@/Firebase/hooks/useAuth";
+import {
+    useMeditationFavorites,
+    useToggleFavorite,
+} from "@/Firebase/hooks/useFavorites";
 import { useAllMeditations } from "@/Firebase/hooks/useMeditations";
 import { MeditationAudio } from "@/types/meditation";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -19,10 +24,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function MeditationAllScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
+  const { user } = useAuthState();
   const categoryId = params.category as string;
   const categoryName = params.categoryName as string;
 
   const { data: meditations = [], isLoading } = useAllMeditations();
+  const { data: favoriteMeditationIds = [] } = useMeditationFavorites(
+    user?.uid,
+  );
+  const toggleFavoriteMutation = useToggleFavorite();
 
   const navigateToSession = (meditation: MeditationAudio) => {
     router.push({
@@ -43,13 +53,13 @@ export default function MeditationAllScreen() {
       // Show ALL meditations regardless of category
       return meditations;
     } else if (categoryId === "fav") {
-      // TODO: Implement favorites tracking
-      return [];
+      // Show favorite meditations
+      return meditations.filter((m) => favoriteMeditationIds.includes(m.id));
     } else {
       // Filter by specific category
       return meditations.filter((m) => m.category === categoryId);
     }
-  }, [categoryId, meditations]);
+  }, [categoryId, meditations, favoriteMeditationIds]);
 
   // Debug: Log what's being filtered
   React.useEffect(() => {
@@ -57,6 +67,27 @@ export default function MeditationAllScreen() {
     console.log("meditation-all - Total meditations:", meditations.length);
     console.log("meditation-all - Filtered count:", filteredMeditations.length);
   }, [categoryId, meditations.length, filteredMeditations.length]);
+
+  const handleToggleFavorite = (itemId: string, e?: React.TouchEvent | any) => {
+    // Prevent navigation when clicking heart
+    if (e) {
+      e.stopPropagation();
+    }
+
+    if (!user?.uid) {
+      return;
+    }
+
+    toggleFavoriteMutation.mutate({
+      userId: user.uid,
+      itemId,
+      itemType: "meditation",
+    });
+  };
+
+  const isFavorited = (itemId: string): boolean => {
+    return favoriteMeditationIds.includes(itemId);
+  };
 
   if (isLoading) {
     return (
@@ -183,8 +214,15 @@ export default function MeditationAllScreen() {
                   <Text style={styles.typeBadgeText}>{item.difficulty}</Text>
                 </View>
               </View>
-              <Pressable style={styles.favoriteButton}>
-                <Heart size={20} color="#666" />
+              <Pressable
+                style={styles.favoriteButton}
+                onPress={(e) => handleToggleFavorite(item.id, e)}
+              >
+                <Heart
+                  size={20}
+                  color={isFavorited(item.id) ? "#FF6B6B" : "#666"}
+                  fill={isFavorited(item.id) ? "#FF6B6B" : "transparent"}
+                />
               </Pressable>
             </Pressable>
           ))

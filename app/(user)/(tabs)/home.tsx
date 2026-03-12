@@ -1,38 +1,83 @@
+import Toast from "@/components/Toast";
 import { COLORS } from "@/constants/colors";
 import { theme } from "@/constants/theme";
 import { useAuthState } from "@/Firebase/hooks/useAuth";
 import {
-    useLastNDaysJournal,
-    useSaveMoodEntry,
-    useStreakStats,
-    useTodayJournal,
-    useUpdateJournalInfo,
+  useLastNDaysJournal,
+  useSaveMoodEntry,
+  useStreakStats,
+  useTodayJournal,
+  useUpdateJournalInfo,
 } from "@/Firebase/hooks/useJournal";
+import { useAllMeditations } from "@/Firebase/hooks/useMeditations";
 import { useUserProfile } from "@/Firebase/hooks/useUser";
-import React, { useEffect, useState } from "react";
+import { useAllYogaVideos } from "@/Firebase/hooks/useYogas";
 import {
-    ActivityIndicator,
-    Alert,
-    Image,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  getTodaysRecommendedMeditation,
+  getTodaysRecommendedYoga,
+} from "@/utils/dailyRecommendations";
+import { useRouter } from "expo-router";
+import React, { useEffect, useMemo, useState } from "react";
+import {
+  ActivityIndicator,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+// Helper function to calculate current pregnancy week based on start date
+const calculateCurrentWeek = (pregnancyStartDate: string): number => {
+  const startDate = new Date(pregnancyStartDate);
+  const today = new Date();
+  const diffTime = Math.abs(today.getTime() - startDate.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  const currentWeek = Math.floor(diffDays / 7) + 1; // +1 because week 1 starts from day 0
+  return Math.min(Math.max(currentWeek, 1), 43); // Clamp between 1 and 43
+};
+
 export default function HomeScreen() {
+  const router = useRouter();
   const { user } = useAuthState();
   const { data: userProfile, isLoading } = useUserProfile(user?.uid);
   const { data: todayJournal } = useTodayJournal(user?.uid);
   const { data: weeklyJournal } = useLastNDaysJournal(user?.uid, 7);
   const { data: streakStats } = useStreakStats(user?.uid);
+  const { data: allMeditations } = useAllMeditations();
+  const { data: allYogaVideos } = useAllYogaVideos();
   const saveMoodMutation = useSaveMoodEntry();
   const updateJournalMutation = useUpdateJournalInfo();
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [journalNote, setJournalNote] = useState("");
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error">("success");
+
+  // Get today's recommended session (alternates between meditation and yoga)
+  const todaysRecommendedSession = useMemo(() => {
+    // Determine if today should be meditation or yoga (alternates based on day of year)
+    const dayOfYear = Math.floor(
+      (new Date().getTime() -
+        new Date(new Date().getFullYear(), 0, 0).getTime()) /
+        86400000,
+    );
+    const isMeditationDay = dayOfYear % 2 === 0;
+
+    if (isMeditationDay && allMeditations && allMeditations.length > 0) {
+      const meditation = getTodaysRecommendedMeditation(allMeditations);
+      return meditation
+        ? { type: "meditation" as const, session: meditation }
+        : null;
+    } else if (allYogaVideos && allYogaVideos.length > 0) {
+      const yoga = getTodaysRecommendedYoga(allYogaVideos);
+      return yoga ? { type: "yoga" as const, session: yoga } : null;
+    }
+    return null;
+  }, [allMeditations, allYogaVideos]);
 
   // Populate journal note from today's data when it loads
   useEffect(() => {
@@ -52,12 +97,18 @@ export default function HomeScreen() {
       });
 
       if (result.success) {
-        Alert.alert("Success", "Journal saved successfully!");
+        setToastMessage("Journal saved successfully!");
+        setToastType("success");
+        setToastVisible(true);
       } else {
-        Alert.alert("Error", result.error || "Failed to save journal");
+        setToastMessage(result.error || "Failed to save journal");
+        setToastType("error");
+        setToastVisible(true);
       }
     } catch (error: any) {
-      Alert.alert("Error", error.message || "An unexpected error occurred");
+      setToastMessage(error.message || "An unexpected error occurred");
+      setToastType("error");
+      setToastVisible(true);
     }
   };
 
@@ -150,8 +201,14 @@ export default function HomeScreen() {
   const currentStreak = streakStats?.currentStreak || 0;
   const previousBest = streakStats?.previousBest || 0;
 
+  // Calculate current pregnancy week dynamically
+  const pregnancyStartDate = userProfile?.pregnancyStartDate;
+  const pregnancyWeek = pregnancyStartDate
+    ? calculateCurrentWeek(pregnancyStartDate)
+    : userProfile?.pregnancyWeek || 24;
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -182,35 +239,66 @@ export default function HomeScreen() {
         {/* Journey Indicator */}
         <View style={styles.journeyIndicator}>
           <Text style={styles.journeyText}>
-            Your Prenatal Journey · Week {userProfile?.pregnancyWeek || 24}
+            Your Prenatal Journey · Week {pregnancyWeek}
           </Text>
         </View>
 
         {/* Today's Recommended Session */}
-        <View style={styles.recommendedCard}>
-          <Text style={styles.recommendedLabel}>
-            Today's Recommended Session
-          </Text>
-          <View style={styles.sessionCard}>
-            <View style={styles.sessionContent}>
-              <Text style={styles.sessionTitle}>Gentle Flow &</Text>
-              <Text style={styles.sessionTitle}>Breadth Awareness</Text>
-              <View style={styles.sessionMeta}>
-                <View style={styles.sessionMetaItem}>
-                  <Text style={styles.sessionMetaText}>⏱ 25 Min</Text>
+        {todaysRecommendedSession && (
+          <View style={styles.recommendedCard}>
+            <Text style={styles.recommendedLabel}>
+              Today's Recommended Session
+            </Text>
+            <View style={styles.sessionCard}>
+              <View style={styles.sessionContent}>
+                <Text style={styles.sessionTitle}>
+                  {todaysRecommendedSession.session.title}
+                </Text>
+                <View style={styles.sessionMeta}>
+                  <View style={styles.sessionMetaItem}>
+                    <Text style={styles.sessionMetaText}>
+                      ⏱{" "}
+                      {todaysRecommendedSession.type === "meditation"
+                        ? todaysRecommendedSession.session.durationText
+                        : todaysRecommendedSession.session.durationText}
+                    </Text>
+                  </View>
+                  <View style={styles.sessionMetaItem}>
+                    <Text style={styles.sessionMetaText}>
+                      {todaysRecommendedSession.type === "meditation"
+                        ? "🧘 Meditation"
+                        : "🧘‍♀️ Yoga"}
+                    </Text>
+                  </View>
+                  {todaysRecommendedSession.type === "meditation" &&
+                    todaysRecommendedSession.session.category && (
+                      <View style={styles.sessionMetaItem}>
+                        <Text style={styles.sessionMetaText}>
+                          ❤ {todaysRecommendedSession.session.category}
+                        </Text>
+                      </View>
+                    )}
                 </View>
-                <View style={styles.sessionMetaItem}>
-                  <Text style={styles.sessionMetaText}>
-                    ❤ Calm-Restore active
-                  </Text>
-                </View>
+                <Pressable
+                  style={styles.startButton}
+                  onPress={() => {
+                    if (todaysRecommendedSession.type === "meditation") {
+                      router.push(
+                        `/(user)/meditation-session?id=${todaysRecommendedSession.session.id}`,
+                      );
+                    } else {
+                      router.push(
+                        `/(user)/yoga-session?id=${todaysRecommendedSession.session.id}`,
+                      );
+                    }
+                  }}
+                >
+                  <Text style={styles.startButtonText}>Start Now</Text>
+                </Pressable>
               </View>
-              <Pressable style={styles.startButton}>
-                <Text style={styles.startButtonText}>Start Now</Text>
-              </Pressable>
             </View>
           </View>
-        </View>
+        )}
 
         {/* Mood Check-in */}
         <View style={styles.section}>
@@ -376,6 +464,14 @@ export default function HomeScreen() {
         {/* Bottom spacing for FAB */}
         <View style={{ height: 80 }} />
       </ScrollView>
+
+      {/* Toast Notification */}
+      <Toast
+        visible={toastVisible}
+        message={toastMessage}
+        type={toastType}
+        onHide={() => setToastVisible(false)}
+      />
 
       {/* Floating Action Button - Removed for now */}
     </SafeAreaView>

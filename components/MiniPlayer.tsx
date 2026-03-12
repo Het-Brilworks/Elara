@@ -5,12 +5,12 @@ import { useRouter } from "expo-router";
 import { Pause, Play, X } from "lucide-react-native";
 import React from "react";
 import {
-    Dimensions,
-    Platform,
-    Pressable,
-    StyleSheet,
-    Text,
-    View,
+  Dimensions,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
 const { width } = Dimensions.get("window");
@@ -118,7 +118,7 @@ export default function MiniPlayer() {
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    bottom: Platform.OS === "ios" ? 80 : 70,
+    bottom: Platform.OS === "ios" ? 80 : 115,
     left: 0,
     right: 0,
     backgroundColor: "#FFF",

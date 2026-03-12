@@ -74,43 +74,43 @@ const getBabySizeComparison = (week: number): string => {
   const sizeMap: { [key: number]: string } = {
     1: "a poppy seed",
     2: "a poppy seed",
-    3: "a sesame seed",
-    4: "a poppyseed",
-    5: "a sesame seed",
-    6: "a lentil",
+    3: "a Vanilla bean seed",
+    4: "a poppy seed",
+    5: "a orange seed",
+    6: "a sweet pea",
     7: "a blueberry",
     8: "a raspberry",
-    9: "a cherry",
-    10: "a kumquat",
-    11: "a fig",
+    9: "a green olive",
+    10: "a prune",
+    11: "a large strawberry",
     12: "a lime",
-    13: "a peapod",
-    14: "a lemon",
-    15: "an apple",
+    13: "a lemon",
+    14: "a navel orange",
+    15: "an pear",
     16: "an avocado",
-    17: "a pear",
-    18: "a sweet potato",
+    17: "a large onion",
+    18: "a cucumber",
     19: "a mango",
-    20: "a banana",
-    21: "a carrot",
+    20: "a sweet potato",
+    21: "a large banana",
     22: "a papaya",
-    23: "a grapefruit",
-    24: "a cantaloupe",
-    25: "a cauliflower",
-    26: "a scallion",
+    23: "a carrot",
+    24: "a ear of corn",
+    25: "a eggplant",
+    26: "a spaghetti squash",
     27: "a cabbage",
-    28: "an eggplant",
-    29: "a butternut squash",
-    30: "a large cabbage",
+    28: "an head of lattuce",
+    29: "a head of cauliflower",
+    30: "a beat",
     31: "a coconut",
-    32: "a jicama",
-    33: "a pineapple",
-    34: "a cantaloupe",
-    35: "a honeydew melon",
-    36: "a romaine lettuce",
-    37: "a bunch of chard",
-    38: "a leek",
-    39: "a mini watermelon",
+    32: "a bunch of celery",
+    33: "a butternut squash",
+    34: "a pineapple",
+    35: "a bunch of swiss chard",
+    36: "a bunch of kale",
+    37: "a canary melon",
+    38: "a mini watermelon",
+    39: "a jackfruit",
     40: "a small pumpkin",
     41: "a pumpkin",
     42: "a watermelon",
@@ -141,7 +141,7 @@ export default function BabyScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
       {!hasPregnancyWeek ? (
         // Show form if pregnancy week is not set
         <PregnancyWeekForm onSuccess={handleFormSuccess} />
@@ -149,10 +149,10 @@ export default function BabyScreen() {
         // Show baby growth info if week is set
         <View style={styles.content}>
           <View style={styles.header}>
-            {/* <View style={styles.headerIcon}>
-              <Baby size={24} color={COLORS.PRIMARY} strokeWidth={2.5} />
-            </View> */}
             <Text style={styles.headerTitle}>Baby Growth</Text>
+            <Text style={styles.headerSubtitle}>
+              Week {pregnancyWeek} of your journey
+            </Text>
           </View>
 
           {/* Decorative Background Elements */}
@@ -170,7 +170,7 @@ export default function BabyScreen() {
           <View style={styles.textContainer}>
             <Text style={styles.cardTitle}>Week {pregnancyWeek}</Text>
             <Text style={styles.cardSubtitle}>
-              Your baby is about the size of {babySize}!
+              Your baby is about the size of {babySize}! 👶
             </Text>
           </View>
         </View>
@@ -188,41 +188,32 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#FFF8FC",
+    backgroundColor: "#FFF5FA",
   },
   header: {
     position: "absolute",
-    top: 0,
+    top: 18,
     left: 0,
     right: 0,
-    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 16,
+    paddingVertical: 20,
     paddingHorizontal: 20,
-    backgroundColor: COLORS.WHITE,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
+    // backgroundColor: COLORS.PINK,
     zIndex: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  headerIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: COLORS.PINK,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
   },
   headerTitle: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: theme.colors.light.primary_text,
+    fontSize: 32,
+    fontWeight: "800",
+    color: COLORS.PRIMARY,
+    letterSpacing: 0.5,
+  },
+  headerSubtitle: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#7B2F4C",
+    marginTop: 4,
+    opacity: 0.8,
   },
   backgroundDecoration: {
     position: "absolute",
@@ -235,7 +226,7 @@ const styles = StyleSheet.create({
   decorativeCircle: {
     position: "absolute",
     borderRadius: 9999,
-    opacity: 0.15,
+    opacity: 0.2,
   },
   circle1: {
     width: 200,
@@ -254,14 +245,14 @@ const styles = StyleSheet.create({
   circle3: {
     width: 180,
     height: 180,
-    backgroundColor: "#E5D4F5",
+    backgroundColor: "#FFD4E5",
     bottom: 150,
     left: -80,
   },
   circle4: {
     width: 120,
     height: 120,
-    backgroundColor: "#FFE5CC",
+    backgroundColor: "#FFC4D6",
     bottom: -30,
     right: -40,
   },
@@ -292,27 +283,40 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.95)",
-    paddingVertical: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.98)",
+    paddingVertical: 18,
     paddingHorizontal: 24,
-    marginHorizontal: 20,
-    borderRadius: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 5,
+    marginHorizontal: 12,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: "rgba(123, 47, 76, 0.1)",
+    shadowColor: COLORS.PRIMARY,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 16,
+    elevation: 8,
     zIndex: 2,
   },
-  cardTitle: {
-    fontSize: 28,
-    fontWeight: "700",
-    color: "#1A1A1A",
+  funIconsTop: {
+    flexDirection: "row",
+    gap: 12,
     marginBottom: 8,
   },
+  funEmoji: {
+    fontSize: 24,
+  },
+  cardTitle: {
+    fontSize: 32,
+    fontWeight: "800",
+    color: COLORS.PRIMARY,
+    marginBottom: 10,
+    letterSpacing: 0.5,
+  },
   cardSubtitle: {
-    fontSize: 16,
-    color: "#666",
+    fontSize: 17,
+    fontWeight: "500",
+    color: "#555",
     textAlign: "center",
+    lineHeight: 24,
   },
 });

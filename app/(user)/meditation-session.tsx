@@ -1,5 +1,10 @@
 import { theme } from "@/constants/theme";
 import { useMeditationPlayer } from "@/contexts/MeditationPlayerContext";
+import { useAuthState } from "@/Firebase/hooks/useAuth";
+import {
+    useIsFavorited,
+    useToggleFavorite,
+} from "@/Firebase/hooks/useFavorites";
 import Slider from "@react-native-community/slider";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
@@ -11,8 +16,9 @@ import {
     Rewind,
     Volume2,
 } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
+    Alert,
     Dimensions,
     ImageBackground,
     Platform,
@@ -31,7 +37,7 @@ const DUMMY_AUDIO_URL =
 export default function MeditationSessionScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
-  const [isFavorite, setIsFavorite] = useState(false);
+  const { user } = useAuthState();
 
   const {
     play,
@@ -57,6 +63,10 @@ export default function MeditationSessionScreen() {
   const audioUrl = (params.audioUrl as string) || DUMMY_AUDIO_URL;
   const fromMiniPlayer = params.fromMiniPlayer === "true";
 
+  // Favorite functionality using Firebase hooks
+  const isFavorite = useIsFavorited(user?.uid, id, "meditation");
+  const toggleFavoriteMutation = useToggleFavorite();
+
   useEffect(() => {
     // Only start playing if not coming from mini player
     if (!fromMiniPlayer) {
@@ -77,6 +87,41 @@ export default function MeditationSessionScreen() {
     } else {
       resume();
     }
+  };
+
+  const handleToggleFavorite = () => {
+    if (!user?.uid) {
+      Alert.alert(
+        "Not Logged In",
+        "Please log in to add meditations to your favorites",
+      );
+      return;
+    }
+
+    if (!id) {
+      Alert.alert(
+        "Error",
+        "Unable to favorite this meditation. Meditation ID is missing.",
+      );
+      return;
+    }
+
+    toggleFavoriteMutation.mutate(
+      {
+        userId: user.uid,
+        itemId: id,
+        itemType: "meditation",
+      },
+      {
+        onSuccess: (data) => {
+          console.log("Favorite toggled successfully:", data);
+        },
+        onError: (error) => {
+          console.error("Error toggling favorite:", error);
+          Alert.alert("Error", "Failed to update favorites. Please try again.");
+        },
+      },
+    );
   };
 
   const formatTime = (seconds: number) => {
@@ -107,8 +152,12 @@ export default function MeditationSessionScreen() {
               <Text style={styles.headerTitle}>Now Playing</Text>
             </View>
             <Pressable
-              onPress={() => setIsFavorite(!isFavorite)}
-              style={styles.iconButton}
+              onPress={handleToggleFavorite}
+              style={[
+                styles.iconButton,
+                toggleFavoriteMutation.isPending && styles.iconButtonDisabled,
+              ]}
+              disabled={toggleFavoriteMutation.isPending}
             >
               <Heart
                 size={24}
@@ -224,6 +273,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: theme.spacing.md,
+    iconButtonDisabled: {
+      opacity: 0.5,
+    },
   },
   iconButton: {
     padding: 8,

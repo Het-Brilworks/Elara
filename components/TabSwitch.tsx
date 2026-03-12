@@ -47,11 +47,12 @@ export const TabSwitch: React.FC<TabSwitchProps> = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    gap: theme.spacing.md,
+    gap: theme.spacing.sm,
+    marginBottom: theme.spacing.md,
   },
   tab: {
     flex: 1,
-    paddingVertical: theme.spacing.md + 2,
+    paddingVertical: theme.spacing.md,
     backgroundColor: "transparent",
     borderRadius: theme.radii.full,
     borderWidth: 2,

@@ -1,33 +1,35 @@
 import { COLORS } from "@/constants/colors";
 import { useAuthState } from "@/Firebase/hooks/useAuth";
 import {
-    useCreateEvent,
-    useDeleteEvent,
-    useEventsByDate,
-    useUserEvents,
+  useCreateEvent,
+  useDeleteEvent,
+  useEventsByDate,
+  useUserEvents,
 } from "@/Firebase/hooks/useCalendar";
 import { CalendarEvent } from "@/Firebase/services/CalendarService";
 import { useRouter } from "expo-router";
 import {
-    ArrowLeft,
-    Calendar as CalendarIcon,
-    ChevronLeft,
-    ChevronRight,
-    Clock,
-    Plus,
-    X,
+  ArrowLeft,
+  Calendar as CalendarIcon,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Plus,
+  X,
 } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-    ActivityIndicator,
-    Modal,
-    Pressable,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  Pressable,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -382,108 +384,120 @@ export default function CalendarScreen() {
         transparent
         onRequestClose={() => setShowAddEventModal(false)}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Add Event</Text>
-              <Pressable
-                onPress={() => setShowAddEventModal(false)}
-                style={styles.modalCloseButton}
-              >
-                <X size={24} color="#999" />
-              </Pressable>
-            </View>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Add Event</Text>
+                <Pressable
+                  onPress={() => setShowAddEventModal(false)}
+                  style={styles.modalCloseButton}
+                >
+                  <X size={24} color="#999" />
+                </Pressable>
+              </View>
 
-            <Text style={styles.modalDateText}>
-              {selectedDate.toLocaleDateString("en-US", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </Text>
+              <Text style={styles.modalDateText}>
+                {selectedDate.toLocaleDateString("en-US", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </Text>
 
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Event Title</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter event title"
-                value={newEvent.title}
-                onChangeText={(text) =>
-                  setNewEvent({ ...newEvent, title: text })
-                }
-              />
-            </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>Event Title</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter event title"
+                  value={newEvent.title}
+                  onChangeText={(text) =>
+                    setNewEvent({ ...newEvent, title: text })
+                  }
+                />
+              </View>
 
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Time (Optional)</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="e.g., 10:00 AM"
-                value={newEvent.time}
-                onChangeText={(text) =>
-                  setNewEvent({ ...newEvent, time: text })
-                }
-              />
-            </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>Time (Optional)</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="e.g., 10:00 AM"
+                  value={newEvent.time}
+                  onChangeText={(text) =>
+                    setNewEvent({ ...newEvent, time: text })
+                  }
+                />
+              </View>
 
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Type</Text>
-              <View style={styles.typeButtons}>
-                {(
-                  ["appointment", "milestone", "reminder", "personal"] as const
-                ).map((type) => (
-                  <Pressable
-                    key={type}
-                    style={[
-                      styles.typeButton,
-                      newEvent.type === type && styles.typeButtonActive,
-                      { borderColor: getEventColor(type) },
-                      newEvent.type === type && {
-                        backgroundColor: getEventColor(type) + "20",
-                      },
-                    ]}
-                    onPress={() => setNewEvent({ ...newEvent, type })}
-                  >
-                    <Text
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputLabel}>Type</Text>
+                <View style={styles.typeButtons}>
+                  {(
+                    [
+                      "appointment",
+                      "milestone",
+                      "reminder",
+                      "personal",
+                    ] as const
+                  ).map((type) => (
+                    <Pressable
+                      key={type}
                       style={[
-                        styles.typeButtonText,
-                        newEvent.type === type && styles.typeButtonTextActive,
+                        styles.typeButton,
+                        newEvent.type === type && styles.typeButtonActive,
+                        { borderColor: getEventColor(type) },
                         newEvent.type === type && {
-                          color: getEventColor(type),
+                          backgroundColor: getEventColor(type) + "20",
                         },
                       ]}
+                      onPress={() => setNewEvent({ ...newEvent, type })}
                     >
-                      {type.charAt(0).toUpperCase() + type.slice(1)}
-                    </Text>
-                  </Pressable>
-                ))}
-              </View>
-            </View>
-
-            <Pressable
-              style={({ pressed }) => [
-                styles.saveButton,
-                pressed && styles.saveButtonPressed,
-                (!newEvent.title.trim() || createEventMutation.isPending) &&
-                  styles.saveButtonDisabled,
-              ]}
-              onPress={handleAddEvent}
-              disabled={!newEvent.title.trim() || createEventMutation.isPending}
-            >
-              {createEventMutation.isPending ? (
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <ActivityIndicator size="small" color="#FFF" />
-                  <Text style={[styles.saveButtonText, { marginLeft: 8 }]}>
-                    Adding...
-                  </Text>
+                      <Text
+                        style={[
+                          styles.typeButtonText,
+                          newEvent.type === type && styles.typeButtonTextActive,
+                          newEvent.type === type && {
+                            color: getEventColor(type),
+                          },
+                        ]}
+                      >
+                        {type.charAt(0).toUpperCase() + type.slice(1)}
+                      </Text>
+                    </Pressable>
+                  ))}
                 </View>
-              ) : (
-                <Text style={styles.saveButtonText}>Add Event</Text>
-              )}
-            </Pressable>
+              </View>
+
+              <Pressable
+                style={({ pressed }) => [
+                  styles.saveButton,
+                  pressed && styles.saveButtonPressed,
+                  (!newEvent.title.trim() || createEventMutation.isPending) &&
+                    styles.saveButtonDisabled,
+                ]}
+                onPress={handleAddEvent}
+                disabled={
+                  !newEvent.title.trim() || createEventMutation.isPending
+                }
+              >
+                {createEventMutation.isPending ? (
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <ActivityIndicator size="small" color="#FFF" />
+                    <Text style={[styles.saveButtonText, { marginLeft: 8 }]}>
+                      Adding...
+                    </Text>
+                  </View>
+                ) : (
+                  <Text style={styles.saveButtonText}>Add Event</Text>
+                )}
+              </Pressable>
+            </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
     </SafeAreaView>
   );

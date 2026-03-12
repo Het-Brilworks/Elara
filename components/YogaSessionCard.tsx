@@ -1,15 +1,23 @@
 import { theme } from "@/constants/theme";
-import { Heart } from "lucide-react-native";
-import React, { useState } from "react";
+import { useAuthState } from "@/Firebase/hooks/useAuth";
 import {
-  ImageBackground,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
+    useIsFavorited,
+    useToggleFavorite,
+} from "@/Firebase/hooks/useFavorites";
+import { Heart } from "lucide-react-native";
+import React from "react";
+import {
+    ActivityIndicator,
+    Alert,
+    ImageBackground,
+    Pressable,
+    StyleSheet,
+    Text,
+    View,
 } from "react-native";
 
 interface YogaSessionCardProps {
+  videoId: string;
   title: string;
   instructor: string;
   level: string;
@@ -17,9 +25,11 @@ interface YogaSessionCardProps {
   duration?: string;
   imageUrl?: string;
   onPress?: () => void;
+  badge?: string;
 }
 
 export default function YogaSessionCard({
+  videoId,
   title,
   instructor,
   level,
@@ -27,8 +37,34 @@ export default function YogaSessionCard({
   duration,
   imageUrl,
   onPress,
+  badge,
 }: YogaSessionCardProps) {
-  const [isFavorite, setIsFavorite] = useState(false);
+  const { user } = useAuthState();
+  const isFavorite = useIsFavorited(user?.uid, videoId, "yoga");
+  const toggleFavoriteMutation = useToggleFavorite();
+
+  const handleToggleFavorite = (e: any) => {
+    e.stopPropagation(); // Prevent card press when clicking heart
+
+    if (!user?.uid) {
+      Alert.alert(
+        "Not Logged In",
+        "Please log in to add videos to your favorites",
+      );
+      return;
+    }
+
+    if (!videoId) {
+      Alert.alert("Error", "Unable to favorite this video");
+      return;
+    }
+
+    toggleFavoriteMutation.mutate({
+      userId: user.uid,
+      itemId: videoId,
+      itemType: "yoga",
+    });
+  };
 
   return (
     <Pressable
@@ -40,6 +76,11 @@ export default function YogaSessionCard({
         style={styles.imageBackground}
         imageStyle={styles.image}
       >
+        {badge ? (
+          <View style={styles.dailyPickBadge}>
+            <Text style={styles.dailyPickText}>{badge}</Text>
+          </View>
+        ) : null}
         {duration ? (
           <View style={styles.durationBadge}>
             <Text style={styles.durationText}>{duration}</Text>
@@ -47,14 +88,22 @@ export default function YogaSessionCard({
         ) : null}
         <Pressable
           style={styles.favoriteButton}
-          onPress={() => setIsFavorite(!isFavorite)}
+          onPress={handleToggleFavorite}
+          disabled={toggleFavoriteMutation.isPending}
         >
-          <Heart
-            size={20}
-            color={isFavorite ? "#FF6B6B" : "#666"}
-            fill={isFavorite ? "#FF6B6B" : "transparent"}
-            strokeWidth={2}
-          />
+          {toggleFavoriteMutation.isPending ? (
+            <ActivityIndicator
+              size="small"
+              color={theme.colors.light.primary}
+            />
+          ) : (
+            <Heart
+              size={20}
+              color={isFavorite ? "#FF6B9D" : "#666"}
+              fill={isFavorite ? "#FF6B9D" : "transparent"}
+              strokeWidth={2}
+            />
+          )}
         </Pressable>
       </ImageBackground>
       <View style={styles.content}>
@@ -114,6 +163,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.sm,
     paddingVertical: 4,
     borderRadius: theme.radii.full,
+  },
+  dailyPickBadge: {
+    position: "absolute",
+    top: theme.spacing.md,
+    left: theme.spacing.md,
+    backgroundColor: theme.colors.light.primary,
+    paddingHorizontal: theme.spacing.sm + 2,
+    paddingVertical: 6,
+    borderRadius: theme.radii.full,
+  },
+  dailyPickText: {
+    fontSize: theme.textStyles.label_small.fontSize,
+    fontWeight: "700",
+    color: "#FFF",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
   },
   durationText: {
     fontSize: theme.textStyles.label_small.fontSize,

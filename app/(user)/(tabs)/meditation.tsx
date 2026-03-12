@@ -6,10 +6,10 @@ import {
 } from "@/Firebase/hooks/useFavorites";
 import {
   useAllMeditations,
-  useFeaturedMeditation,
   useMeditationCategories,
 } from "@/Firebase/hooks/useMeditations";
 import { MeditationAudio } from "@/types/meditation";
+import { getDailyMeditationPick } from "@/utils/dailyRecommendations";
 import { useRouter } from "expo-router";
 import {
   Cloud,
@@ -24,7 +24,7 @@ import {
   Star,
   Wind,
 } from "lucide-react-native";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   ActivityIndicator,
   Dimensions,
@@ -62,8 +62,14 @@ export default function MeditationScreen() {
     useAllMeditations();
   const { data: categories = [], isLoading: categoriesLoading } =
     useMeditationCategories();
-  const { data: featuredMeditation, isLoading: featuredLoading } =
-    useFeaturedMeditation();
+
+  // Get daily pick meditation based on today's date
+  const dailyPickMeditation = useMemo(() => {
+    if (meditations && meditations.length > 0) {
+      return getDailyMeditationPick(meditations);
+    }
+    return null;
+  }, [meditations]);
 
   // Fetch favorites
   const { data: favoriteMeditationIds = [] } = useMeditationFavorites(
@@ -158,7 +164,10 @@ export default function MeditationScreen() {
   // Loading state
   if (meditationsLoading || categoriesLoading) {
     return (
-      <SafeAreaView style={[styles.container, styles.centerContent]}>
+      <SafeAreaView
+        style={[styles.container, styles.centerContent]}
+        edges={["top", "left", "right"]}
+      >
         <ActivityIndicator size="large" color={theme.colors.light.primary} />
         <Text style={styles.loadingText}>Loading meditations...</Text>
       </SafeAreaView>
@@ -166,7 +175,7 @@ export default function MeditationScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
       <View style={styles.headerBlobLeft} />
       <View style={styles.headerBlobRight} />
 
@@ -211,13 +220,13 @@ export default function MeditationScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Featured Section - Hide when searching */}
-        {!searchQuery && featuredMeditation && (
+        {!searchQuery && dailyPickMeditation && (
           <Pressable
             style={styles.featuredCard}
-            onPress={() => navigateToSession(featuredMeditation)}
+            onPress={() => navigateToSession(dailyPickMeditation)}
           >
             <ImageBackground
-              source={{ uri: featuredMeditation.coverImage }}
+              source={{ uri: dailyPickMeditation.coverImage }}
               style={styles.featuredImage}
               imageStyle={styles.featuredImageStyle}
             >
@@ -227,12 +236,12 @@ export default function MeditationScreen() {
               <View style={styles.featuredOverlay}>
                 <View>
                   <Text style={styles.featuredTitle}>
-                    {featuredMeditation.title}
+                    {dailyPickMeditation.title}
                   </Text>
                   <View style={styles.featuredMeta}>
                     <Text style={styles.featuredMetaText}>
-                      {featuredMeditation.type} •{" "}
-                      {featuredMeditation.durationText}
+                      {dailyPickMeditation.type} •{" "}
+                      {dailyPickMeditation.durationText}
                     </Text>
                   </View>
                 </View>
@@ -466,7 +475,7 @@ export default function MeditationScreen() {
           )}
         </View>
 
-        <View style={{ height: 100 }} />
+        <View style={{ height: 160 }} />
       </ScrollView>
     </SafeAreaView>
   );

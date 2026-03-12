@@ -10,6 +10,8 @@ import {
   ActivityIndicator,
   Alert,
   Image,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
   ScrollView,
   StatusBar,
@@ -101,146 +103,157 @@ export default function AuthScreen() {
       <SafeAreaView style={styles.container} edges={["top"]}>
         <StatusBar barStyle="dark-content" />
 
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
+        <KeyboardAvoidingView
+          style={styles.keyboardView}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
         >
-          {/* Logo and Title */}
-          <View style={styles.header}>
-            <Image
-              source={require("@/assets/images/splash-icon.png")}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-            <Text style={styles.subtitle}>
-              Your companion through every stage of motherhood
-            </Text>
-          </View>
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+            {/* Logo and Title */}
+            <View style={styles.header}>
+              <Image
+                source={require("@/assets/images/splash-icon.png")}
+                style={styles.logo}
+                resizeMode="contain"
+              />
+              <Text style={styles.subtitle}>
+                Your companion through every stage of motherhood
+              </Text>
+            </View>
 
-          {/* Tab Switch */}
-          <TabSwitch activeTab={activeTab} onTabChange={setActiveTab} />
+            {/* Tab Switch */}
+            <TabSwitch activeTab={activeTab} onTabChange={setActiveTab} />
 
-          {/* Form */}
-          <View style={styles.form}>
-            {activeTab === "signup" && (
-              <>
-                <InputField
-                  label="Full Name"
-                  placeholder="Enter your name"
-                  Icon={User}
-                  value={fullName}
-                  onChangeText={setFullName}
-                  editable={!isLoading}
-                />
-                <InputField
-                  label="Email Address"
-                  placeholder="hello@example.com"
-                  Icon={Mail}
-                  value={email}
-                  onChangeText={setEmail}
-                  keyboardType="email-address"
-                  editable={!isLoading}
-                />
-                <InputField
-                  label="Password"
-                  placeholder="Create a password"
-                  Icon={Lock}
-                  value={password}
-                  onChangeText={setPassword}
-                  secureTextEntry
-                  editable={!isLoading}
-                />
-
-                {/* Create Account Button */}
-                <Pressable
-                  style={({ pressed }) => [
-                    styles.primaryButton,
-                    (pressed || isLoading) && styles.primaryButtonPressed,
-                    isLoading && styles.primaryButtonDisabled,
-                  ]}
-                  onPress={handleCreateAccount}
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <ActivityIndicator color={theme.colors.dark.on_primary} />
-                  ) : (
-                    <Text style={styles.primaryButtonText}>Create Account</Text>
-                  )}
-                </Pressable>
-              </>
-            )}
-
-            {activeTab === "login" && (
-              <>
-                <InputField
-                  label="Email Address"
-                  placeholder="hello@example.com"
-                  Icon={Mail}
-                  value={email}
-                  onChangeText={setEmail}
-                  keyboardType="email-address"
-                  editable={!isLoading}
-                />
-                <InputField
-                  label="Password"
-                  placeholder="Enter your password"
-                  Icon={Lock}
-                  value={password}
-                  onChangeText={setPassword}
-                  secureTextEntry
-                  editable={!isLoading}
-                />
-
-                {/* Forgot Password Link */}
-                <Pressable
-                  onPress={() => router.push("/forgot-password")}
-                  style={styles.forgotPasswordContainer}
-                >
-                  <Text style={styles.forgotPasswordText}>
-                    Forgot Password?
-                  </Text>
-                </Pressable>
-
-                <Pressable
-                  style={({ pressed }) => [
-                    styles.primaryButton,
-                    (pressed || isLoading) && styles.primaryButtonPressed,
-                    isLoading && styles.primaryButtonDisabled,
-                  ]}
-                  onPress={handleLogin}
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <ActivityIndicator color={theme.colors.dark.on_primary} />
-                  ) : (
-                    <Text style={styles.primaryButtonText}>Login</Text>
-                  )}
-                </Pressable>
-              </>
-            )}
-
-            {/* Sign In Link */}
-            <View style={styles.signInContainer}>
-              {activeTab === "signup" ? (
+            {/* Form */}
+            <View style={styles.form}>
+              {activeTab === "signup" && (
                 <>
-                  <Text style={styles.signInText}>
-                    Already have an account?{" "}
-                  </Text>
-                  <Pressable onPress={() => setActiveTab("login")}>
-                    <Text style={styles.signInLink}>Sign in</Text>
-                  </Pressable>
-                </>
-              ) : (
-                <>
-                  <Text style={styles.signInText}>Don't have an account? </Text>
-                  <Pressable onPress={() => setActiveTab("signup")}>
-                    <Text style={styles.signInLink}>Sign up</Text>
+                  <InputField
+                    label="Full Name"
+                    placeholder="Enter your name"
+                    Icon={User}
+                    value={fullName}
+                    onChangeText={setFullName}
+                    editable={!isLoading}
+                  />
+                  <InputField
+                    label="Email Address"
+                    placeholder="hello@example.com"
+                    Icon={Mail}
+                    value={email}
+                    onChangeText={setEmail}
+                    keyboardType="email-address"
+                    editable={!isLoading}
+                  />
+                  <InputField
+                    label="Password"
+                    placeholder="Create a password"
+                    Icon={Lock}
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry
+                    editable={!isLoading}
+                  />
+
+                  {/* Create Account Button */}
+                  <Pressable
+                    style={({ pressed }) => [
+                      styles.primaryButton,
+                      (pressed || isLoading) && styles.primaryButtonPressed,
+                      isLoading && styles.primaryButtonDisabled,
+                    ]}
+                    onPress={handleCreateAccount}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <ActivityIndicator color={theme.colors.dark.on_primary} />
+                    ) : (
+                      <Text style={styles.primaryButtonText}>
+                        Create Account
+                      </Text>
+                    )}
                   </Pressable>
                 </>
               )}
+
+              {activeTab === "login" && (
+                <>
+                  <InputField
+                    label="Email Address"
+                    placeholder="hello@example.com"
+                    Icon={Mail}
+                    value={email}
+                    onChangeText={setEmail}
+                    keyboardType="email-address"
+                    editable={!isLoading}
+                  />
+                  <InputField
+                    label="Password"
+                    placeholder="Enter your password"
+                    Icon={Lock}
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry
+                    editable={!isLoading}
+                  />
+
+                  {/* Forgot Password Link */}
+                  <Pressable
+                    onPress={() => router.push("/forgot-password")}
+                    style={styles.forgotPasswordContainer}
+                  >
+                    <Text style={styles.forgotPasswordText}>
+                      Forgot Password?
+                    </Text>
+                  </Pressable>
+
+                  <Pressable
+                    style={({ pressed }) => [
+                      styles.primaryButton,
+                      (pressed || isLoading) && styles.primaryButtonPressed,
+                      isLoading && styles.primaryButtonDisabled,
+                    ]}
+                    onPress={handleLogin}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <ActivityIndicator color={theme.colors.dark.on_primary} />
+                    ) : (
+                      <Text style={styles.primaryButtonText}>Login</Text>
+                    )}
+                  </Pressable>
+                </>
+              )}
+
+              {/* Sign In Link */}
+              <View style={styles.signInContainer}>
+                {activeTab === "signup" ? (
+                  <>
+                    <Text style={styles.signInText}>
+                      Already have an account?{" "}
+                    </Text>
+                    <Pressable onPress={() => setActiveTab("login")}>
+                      <Text style={styles.signInLink}>Sign in</Text>
+                    </Pressable>
+                  </>
+                ) : (
+                  <>
+                    <Text style={styles.signInText}>
+                      Don't have an account?{" "}
+                    </Text>
+                    <Pressable onPress={() => setActiveTab("signup")}>
+                      <Text style={styles.signInLink}>Sign up</Text>
+                    </Pressable>
+                  </>
+                )}
+              </View>
             </View>
-          </View>
-        </ScrollView>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </>
   );
@@ -251,19 +264,21 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.light.background,
   },
+  keyboardView: {
+    flex: 1,
+  },
   scrollContent: {
     paddingHorizontal: theme.spacing.lg,
-    paddingBottom: theme.spacing.xl,
+    paddingBottom: theme.spacing.lg,
   },
   header: {
     alignItems: "center",
-    marginVertical: theme.spacing.xl,
-    marginTop: theme.spacing.xl + theme.spacing.lg,
+    marginVertical: theme.spacing.md,
+    marginTop: theme.spacing.md,
   },
   logo: {
-    width: 180,
-    height: 180,
-    // marginBottom: theme.spacing.md,
+    width: 140,
+    height: 140,
   },
   title: {
     fontSize: 28,
@@ -277,14 +292,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   form: {
-    marginTop: theme.spacing.xl,
+    marginTop: theme.spacing.md,
   },
   primaryButton: {
     backgroundColor: COLORS.PRIMARY,
     borderRadius: theme.radii.full,
     paddingVertical: theme.spacing.md + 4,
     alignItems: "center",
-    marginTop: theme.spacing.lg,
+    marginTop: theme.spacing.md,
   },
   primaryButtonPressed: {
     opacity: 0.8,
@@ -301,7 +316,7 @@ const styles = StyleSheet.create({
   signInContainer: {
     flexDirection: "row",
     justifyContent: "center",
-    marginTop: theme.spacing.lg,
+    marginTop: theme.spacing.md,
   },
   signInText: {
     ...theme.textStyles.body_medium,
