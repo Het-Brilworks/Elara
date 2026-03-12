@@ -3,30 +3,30 @@ import { COLORS } from "@/constants/colors";
 import { theme } from "@/constants/theme";
 import { useAuthState } from "@/Firebase/hooks/useAuth";
 import {
-  useLastNDaysJournal,
-  useSaveMoodEntry,
-  useStreakStats,
-  useTodayJournal,
-  useUpdateJournalInfo,
+    useLastNDaysJournal,
+    useSaveMoodEntry,
+    useStreakStats,
+    useTodayJournal,
+    useUpdateJournalInfo,
 } from "@/Firebase/hooks/useJournal";
 import { useAllMeditations } from "@/Firebase/hooks/useMeditations";
 import { useUserProfile } from "@/Firebase/hooks/useUser";
 import { useAllYogaVideos } from "@/Firebase/hooks/useYogas";
 import {
-  getTodaysRecommendedMeditation,
-  getTodaysRecommendedYoga,
+    getTodaysRecommendedMeditation,
+    getTodaysRecommendedYoga,
 } from "@/utils/dailyRecommendations";
 import { useRouter } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
 import {
-  ActivityIndicator,
-  Image,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
+    ActivityIndicator,
+    Image,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -377,7 +377,12 @@ export default function HomeScreen() {
 
         {/* Daily Journal Writing Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Daily Journal</Text>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Daily Journal</Text>
+            <Pressable onPress={() => router.push("/(user)/journal-history")}>
+              <Text style={styles.seeAll}>See All</Text>
+            </Pressable>
+          </View>
           <View style={styles.journalCard}>
             <TextInput
               style={styles.journalInput}
@@ -619,6 +624,11 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: theme.colors.light.primary_text,
     marginBottom: theme.spacing.sm,
+  },
+  seeAll: {
+    fontSize: theme.textStyles.label_medium.fontSize,
+    fontWeight: "600",
+    color: theme.colors.light.primary,
   },
   moodContainer: {
     flexDirection: "row",
